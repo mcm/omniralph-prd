@@ -115,9 +115,9 @@ and fold it into your understanding before you start asking questions.
 4. Work through the steps interactively. Ask clarifying questions, iterate, and
    **always have the user review and confirm before you write anything to
    Linear.**
-5. When the Linear issue(s) are created or updated, offer to delegate to
-   omniralph (see `common.md` → "Handing off to omniralph"), then tell the user
-   you're done.
+5. When the Linear issue(s) are created or updated, tell the user you're done.
+   Don't offer to delegate to omniralph (see `common.md` → "Delegating to
+   omniralph").
 
 ## Invariants (all modes)
 
@@ -132,7 +132,11 @@ and fold it into your understanding before you start asking questions.
   that is already completed or in progress without confirmation.
 - Never write story IDs or metadata into Linear titles or bodies. Priority,
   order, dependencies and manual steps are Linear fields (see `common.md`).
-- Never delegate to omniralph without confirmation.
+- Express every ordering constraint as a blocks relation. Sub-issue order in
+  the parent is cosmetic: never ask the user to drag or reorder sub-issues,
+  and never comment on where one ended up.
+- Never offer to delegate to omniralph, and never delegate unless the user
+  asks for it.
 - Never add a `[repo=…]` tag unless the user asks for one. Omniralph routes
   issues to a repository by team, project or label, and a tag overrides that
   routing.

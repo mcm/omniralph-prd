@@ -277,13 +277,17 @@ As a [user], I want [feature] so that [benefit].
 open blockers: in-progress stories first, then by **Linear priority** (Urgent
 first, *No priority* last), then by the sub-issues' order in the parent.
 
-- Use **blocks relations** for real dependencies. They are the only thing that
-  stops a story from running early.
-- Give every story a priority. Priority beats order, so either use one priority
-  for the whole epic and let blocks relations and order decide, or set
-  priorities that agree with the intended order on purpose.
-- Order stories so earlier ones enable later ones, and create them in that
-  order.
+- Use **blocks relations** for every real dependency. They are the only thing
+  that stops a story from running early, and they alone must make the epic
+  run correctly. If a story would break when run before another, that's a
+  missing blocks relation — add it.
+- Give every story a priority. Use one priority for the whole epic unless some
+  stories genuinely matter more.
+- Sub-issue order in the parent is cosmetic: it only breaks ties between
+  stories that are equally ready, which by definition can run in either order.
+  Create sub-issues in story order, but never check, report or ask about where
+  they ended up in the parent — don't tell the user to drag or reorder them,
+  and don't remark that one landed out of place.
 
 **Manual stories.** A step for a person (see "Prerequisites and manual steps")
 is its own sub-issue with the **manual** label (or the label `LINEAR.md`
@@ -385,10 +389,7 @@ After creating them:
 1. Replace drafting labels with Linear identifiers wherever they ended up in a
    description (story cross-references, the validation sub-issue's "Stories
    covered" line).
-2. Check the sub-issue order in the parent. The Linear MCP can't set it, so if
-   it doesn't match the story order, ask the user to drag the sub-issues into
-   place.
-3. Verify every dependency you drafted exists as a blocks relation.
+2. Verify every dependency you drafted exists as a blocks relation.
 
 **Single issue (smaller than L):**
 
@@ -407,12 +408,12 @@ Whenever removing a story/issue in Linear, **cancel** it (do not delete). Never
 modify a sub-issue that is already completed or in progress, and never
 restructure an issue, without explicit user confirmation.
 
-### Handing off to omniralph
+### Delegating to omniralph
 
-Once everything is written, offer to delegate the epic (or single issue) to
-omniralph (`save_issue` with `delegate`, using the agent name from `LINEAR.md`,
-else `Omniralph`). Delegating is what starts the run. Only delegate after the user
-confirms.
+Delegating is what starts the run, and it's the user's call. Never offer to
+delegate, and don't suggest it as a next step. Only if the user asks, delegate
+the epic (or single issue) with `save_issue` and `delegate`, using the agent
+name from `LINEAR.md`, else `Omniralph`.
 
 ---
 

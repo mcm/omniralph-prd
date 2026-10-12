@@ -43,7 +43,7 @@ story aside in either of these cases:
 
 A reply of `/continue` (or any guidance reply) in the agent session gives the
 story fresh rounds and clears its score history. Tell the user this when you
-hand off.
+finish.
 
 ---
 
@@ -72,7 +72,7 @@ Check these before anything else, and stop to fix any that fail:
    - **Both files must be on the default branch before the epic is
      delegated**, because runs branch from it. Commit them on a branch and
      open a PR, or commit to the default branch if the user prefers. Remind
-     the user to merge it before handing off.
+     the user to merge it before the epic is delegated.
 4. **A screenshot loop exists.** The review story and every UI story need to
    render the UI and screenshot it unattended: a showcase, Storybook, or the
    app's dev server, plus a committed script that captures named screens at
@@ -264,7 +264,8 @@ priority and blockers, the bar, and the mode. Then follow `mode-new.md` →
 "Final step" for an epic. That covers the epic issue, the sub-issues in story
 order, the review story blocked by all of them, and the post-creation steps.
 
-Hand off as in `common.md`. Tell the user two things:
+When you finish, tell the user two things (and don't offer to delegate; see
+`common.md` → "Delegating to omniralph"):
 
 - It runs at most 8 rounds, and stops sooner if the score doesn't improve for
   3 rounds in a row. A `/continue` reply gives it fresh rounds (see "Round

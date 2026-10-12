@@ -188,8 +188,8 @@ confirm, use the Linear MCP tools:
   dependencies and labels; **Remove** → cancel the sub-issue (do not delete)
   and note it in the Change Log; **Reorder** → update blocks relations
   (`blockedBy` / `removeBlockedBy`) and priorities to reflect the new order.
-  The Linear MCP can't set sub-issue order, so if the order in the parent
-  should change too, ask the user to drag the sub-issues into place.
+  Blocks relations carry the order; the sub-issue order in the parent is
+  cosmetic, so don't mention it to the user.
 - Replace any `new-N` labels in descriptions with the new Linear identifiers.
 - Update the functional-requirements validation sub-issue to reflect the revised
   FR list, the stories it covers, and their acceptance criteria. Make sure it is
@@ -233,6 +233,6 @@ without explicit user confirmation in this session.
 - [ ] Did not silently modify completed or in-progress sub-issues, or
       restructure the issue without confirmation
 
-Once the changes are applied, tell the user how omniralph will pick them up: if
-it is running, a reply in its session; otherwise offer to delegate (or
-re-delegate) the epic. Then tell the user you're done.
+Once the changes are applied, if omniralph is running on the epic, tell the
+user it picks them up from a reply in its session. Then tell the user you're
+done. Don't offer to delegate or re-delegate the epic.

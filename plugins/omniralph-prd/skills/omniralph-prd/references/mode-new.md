@@ -71,7 +71,7 @@ they confirm, use the Linear MCP tools to create the issue(s), following
 - Create the functional-requirements validation sub-issue (format in
   `common.md`), blocked by all the other sub-issues.
 - Do the post-creation steps: replace drafting labels with Linear identifiers,
-  check the sub-issue order, and verify the blocks relations.
+  and verify the blocks relations.
 
 **If smaller than L — create a single self-contained issue (no sub-issues):**
 
@@ -105,5 +105,4 @@ they confirm, use the Linear MCP tools to create the issue(s), following
       `[repo=…]` tag unless the user asked for one
 - [ ] No `## Open Questions` section left in any description
 
-Once the issue is created, offer to delegate it to omniralph, then tell the user
-you're done.
+Once the issue is created, tell the user you're done.
