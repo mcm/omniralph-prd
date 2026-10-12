@@ -17,7 +17,7 @@ plugins/omniralph-prd/
 ## Install
 
 ```sh
-claude plugin marketplace add <owner>/<repo>   # or a git URL, or a local path
+claude plugin marketplace add mcm/omniralph-prd
 claude plugin install omniralph-prd@omniralph-prd
 ```
 
@@ -30,7 +30,7 @@ project's `.claude/settings.json`):
 {
   "extraKnownMarketplaces": {
     "omniralph-prd": {
-      "source": { "source": "github", "repo": "<owner>/<repo>" },
+      "source": { "source": "github", "repo": "mcm/omniralph-prd" },
       "autoUpdate": true
     }
   },
