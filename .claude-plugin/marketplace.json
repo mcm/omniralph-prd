@@ -1,0 +1,14 @@
+{
+  "name": "omniralph-prd",
+  "owner": {
+    "name": "Steve McMaster"
+  },
+  "description": "Marketplace for the omniralph-prd plugin.",
+  "plugins": [
+    {
+      "name": "omniralph-prd",
+      "source": "./plugins/omniralph-prd",
+      "description": "Create, triage, or edit Linear PRDs with t-shirt sizing and epic decomposition, for omniralph to build."
+    }
+  ]
+}

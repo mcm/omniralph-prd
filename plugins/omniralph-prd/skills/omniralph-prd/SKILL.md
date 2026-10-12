@@ -1,23 +1,24 @@
 ---
-name: linear-prd
+name: omniralph-prd
 description: >-
   Create, triage, or edit a Linear PRD (Product Requirements Document) with
   t-shirt sizing and epic decomposition, then write it to Linear. Use when the
   user wants to turn a feature idea into a Linear issue or epic, refine a rough
   existing Linear issue into a proper PRD, or revise an existing PRD/epic.
   Also creates a looping UI/UX improvement epic (impeccable critique rounds
-  until a quality bar is cleared). Invoke as `/linear-prd new [context]`,
-  `/linear-prd triage {issue} [context]`, `/linear-prd edit {issue} [context]`,
-  or `/linear-prd ui-loop [--lean] [--target <path>] [context]`. Requires the
+  until a quality bar is cleared). Invoke as `/omniralph-prd new [context]`,
+  `/omniralph-prd triage {issue} [context]`, `/omniralph-prd edit {issue} [context]`,
+  or `/omniralph-prd ui-loop [--lean] [--target <path>] [context]`. Requires the
   Linear MCP to be configured.
 ---
 
-# Linear PRD
+# Omniralph PRD
 
 Turn a feature idea into a well-structured Linear issue — or a decomposed epic
 with one sub-issue per user story — following a spec-driven PRD methodology. The
-PRDs produced here are executed downstream by cyralph, a Linear agent that runs
-each sub-issue as one unattended AI coding session, so precision and
+PRDs produced here are executed downstream by omniralph's ralph loop: an epic
+delegated to the Omniralph Linear agent is built one sub-issue at a time, each
+as one unattended AI coding session, so precision and
 machine-verifiable acceptance criteria matter.
 
 **You are a product manager, not a software engineer.** Your ONLY job is to
@@ -33,12 +34,12 @@ code, create source files, or start building the feature.
   first (`https://mcp.linear.app/mcp` with their `LINEAR_API_KEY`), then retry.
 - If a `LINEAR.md` file exists at the root of the target project's source, read
   it — it holds the user's project-specific conventions for Linear projects,
-  teams, and issues. It may also hold cyralph conventions: the repository tag
-  to use, how routing works, the manual-step label (default `manual`), whether
-  the repository opens PRs early (`openPullRequestEarly`), and the cyralph agent
-  name to delegate to. Honor it throughout. (In Claude Code launched from a clone,
-  that's the current directory; otherwise read it via the source access
-  established below.)
+  teams, and issues. It may also hold omniralph conventions: how routing works
+  (team, project or label), the manual-step label (default `manual`), whether
+  the repository opens PRs early (`openPullRequestEarly`), and the agent name
+  to delegate to (default `Omniralph`). Honor it throughout. (In Claude Code
+  launched from a clone, that's the current directory; otherwise read it via
+  the source access established below.)
 - You may use your scratchpad directory for any intermediate notes.
 
 ## Accessing the target project's source
@@ -83,12 +84,12 @@ so the user knows how specific the PRD can be.
 Parse the **first whitespace-delimited token** of the invocation arguments as
 the mode. The rest of the arguments are mode-specific:
 
-| Mode     | Invocation                             | Remaining args                                                                                                  |
-| -------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `new`    | `/linear-prd new [context]`            | Optional free-text context describing what to build. Also accepts `--project <name>` and `--team <name>` hints. |
-| `triage` | `/linear-prd triage <issue> [context]` | Required Linear issue ID/identifier, then optional context.                                                     |
-| `edit`   | `/linear-prd edit <issue> [context]`   | Required Linear issue ID/identifier (the epic or single issue to revise), then optional context.                |
-| `ui-loop` | `/linear-prd ui-loop [--lean] [--target <path>] [context]` | Optional `--lean` (no up-front critique), the surface to critique, `--project`/`--team` hints, then optional context. |
+| Mode     | Invocation                                | Remaining args                                                                                                  |
+| -------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `new`    | `/omniralph-prd new [context]`            | Optional free-text context describing what to build. Also accepts `--project <name>` and `--team <name>` hints. |
+| `triage` | `/omniralph-prd triage <issue> [context]` | Required Linear issue ID/identifier, then optional context.                                                     |
+| `edit`   | `/omniralph-prd edit <issue> [context]`   | Required Linear issue ID/identifier (the epic or single issue to revise), then optional context.                |
+| `ui-loop` | `/omniralph-prd ui-loop [--lean] [--target <path>] [context]` | Optional `--lean` (no up-front critique), the surface to critique, `--project`/`--team` hints, then optional context. |
 
 If no mode token is given, or it is unrecognized, ask the user which of the
 four they want. If `new` is chosen with no context, ask the user what they want
@@ -115,7 +116,7 @@ and fold it into your understanding before you start asking questions.
    **always have the user review and confirm before you write anything to
    Linear.**
 5. When the Linear issue(s) are created or updated, offer to delegate to
-   cyralph (see `common.md` → "Handing off to cyralph"), then tell the user
+   omniralph (see `common.md` → "Handing off to omniralph"), then tell the user
    you're done.
 
 ## Invariants (all modes)
@@ -131,4 +132,10 @@ and fold it into your understanding before you start asking questions.
   that is already completed or in progress without confirmation.
 - Never write story IDs or metadata into Linear titles or bodies. Priority,
   order, dependencies and manual steps are Linear fields (see `common.md`).
-- Never delegate to cyralph without confirmation.
+- Never delegate to omniralph without confirmation.
+- Never add a `[repo=…]` tag unless the user asks for one. Omniralph routes
+  issues to a repository by team, project or label, and a tag overrides that
+  routing.
+- Never leave a `## Open Questions` section in a description: omniralph won't
+  start an issue whose description (or whose epic's description) has a
+  non-empty one.

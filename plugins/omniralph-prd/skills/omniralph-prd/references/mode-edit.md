@@ -20,8 +20,8 @@ and all of its sub-issues.
   labels (especially the manual label), and blocking relationships.
 - Note any sub-issues already completed, in progress, or cancelled — these
   constrain what can change.
-- Check whether the epic is delegated to cyralph or has an active agent
-  session. If it does, cyralph may be working a story right now.
+- Check whether the epic is delegated to omniralph or has an active agent
+  session. If it does, omniralph may be working a story right now.
 - Look for legacy ralph-tui markup: `US-001:` title prefixes and
   `## Ralph Metadata` sections (Story ID, Ralph Priority, Dependencies).
 
@@ -29,8 +29,8 @@ Then summarize for the user:
 
 - The PRD's current shape (sections present, sections missing, format
   deviations from the standard, including any legacy markup).
-- Whether cyralph is running on the epic. If it is, warn that the in-progress
-  story is mid-run, and that changes are picked up by replying in the cyralph
+- Whether omniralph is running on the epic. If it is, warn that the in-progress
+  story is mid-run, and that changes are picked up by replying in the omniralph
   session or by re-delegating.
 - The user stories that exist today, in order.
 - Whether a functional-requirements sub-issue exists.
@@ -78,7 +78,7 @@ if the edit is small and well-specified. Example starter set:
    C. No, preserve the existing structure
 ```
 
-If the user picks 2C, warn them: reopening a Done story makes cyralph run it
+If the user picks 2C, warn them: reopening a Done story makes omniralph run it
 again on the next delegation, on top of code that is already on the epic
 branch. Its acceptance criteria should describe the change still needed, not
 the whole story again.
@@ -141,12 +141,12 @@ new-2:  Add — blocked by ENG-15
 Guidelines:
 
 - Existing stories are named by their Linear identifier, which never changes —
-  cyralph's commits and progress log reference it. Label new stories `new-1`,
+  omniralph's commits and progress log reference it. Label new stories `new-1`,
   `new-2`, … until they are created.
 - Each kept/edited/new story follows the format in `common.md`, with a
   priority, blocks relations, and the manual label where it applies.
 - **Legacy markup** (if the user chose to normalize): remove `## Ralph Metadata`
-  sections and `US-001:` title prefixes from pending stories only. cyralph uses
+  sections and `US-001:` title prefixes from pending stories only. omniralph uses
   a legacy `Ralph Priority` when a sub-issue has no Linear priority, so set the
   Linear priority first. Leave completed and in-progress stories untouched.
 - Make sure the functional-requirements validation sub-issue follows
@@ -225,7 +225,7 @@ without explicit user confirmation in this session.
 - [ ] Every new or edited story has a priority and its dependencies as blocks
       relations; no story IDs or metadata added to titles or bodies
 - [ ] Quality gates match CI and follow the exact `## Quality Gates` format
-- [ ] Warned the user if cyralph is running on the epic or a Done story is
+- [ ] Warned the user if omniralph is running on the epic or a Done story is
       being reopened
 - [ ] Non-goals section still defines clear boundaries
 - [ ] Success metrics are specific and measurable
@@ -233,6 +233,6 @@ without explicit user confirmation in this session.
 - [ ] Did not silently modify completed or in-progress sub-issues, or
       restructure the issue without confirmation
 
-Once the changes are applied, tell the user how cyralph will pick them up: if
+Once the changes are applied, tell the user how omniralph will pick them up: if
 it is running, a reply in its session; otherwise offer to delegate (or
 re-delegate) the epic. Then tell the user you're done.

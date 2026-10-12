@@ -1,0 +1,7 @@
+{
+  "name": "omniralph-prd",
+  "description": "Create, triage, or edit Linear PRDs with t-shirt sizing and epic decomposition, for omniralph to build.",
+  "author": {
+    "name": "Steve McMaster"
+  }
+}

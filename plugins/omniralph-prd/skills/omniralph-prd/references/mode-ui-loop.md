@@ -1,11 +1,11 @@
 # Mode: ui-loop
 
 You are creating an epic that improves the UI/UX of a project **in a loop**:
-cyralph builds a round of fixes, then a review story critiques the result with
+omniralph builds a round of fixes, then a review story critiques the result with
 the impeccable design skill and files the next round as new sub-issues. That
 continues until the critique clears a quality bar. Write it to Linear.
 
-Invocation: `/linear-prd ui-loop [--lean] [--target <path>] [context]`.
+Invocation: `/omniralph-prd ui-loop [--lean] [--target <path>] [context]`.
 
 - **Seeded (the default).** You run the baseline critique now, ask the user
   the design decisions it raises, and create the first round of fix stories
@@ -24,20 +24,26 @@ Follow the artifact formats in `common.md`. This mode always produces an
 
 ## How the loop works (explain this to the user once)
 
-The review story is an ordinary cyralph story, last in the epic and blocked by
+The review story is an ordinary omniralph story, last in the epic and blocked by
 every other sub-issue. When its round finds problems that block the bar, it
-reports **blocked** with the problems as `followUps`. cyralph files them as
+reports **blocked** with the problems as `followUps`. omniralph files them as
 sub-issues of the epic that block the review story. It builds them, then
 re-runs the review story. When a round clears the bar, the story reports
 **complete**, and any remaining non-blocking findings join the epic as
-ordinary stories. When those are done, cyralph opens the PR.
+ordinary stories. When those are done, omniralph opens the PR.
 
-**Round limit.** cyralph counts each round that reports blocked as a failed
-attempt, and a story is set aside after 3 attempts. So a loop stops after 3
-rounds unless someone replies `/continue` in the agent session, which gives
-the story fresh attempts. Tell the user this when you hand off. (A cyralph
-change to give review loops their own round and stall caps is planned; once
-it ships, this paragraph no longer applies.)
+**Round limit.** A round that reports blocked and files follow-ups doesn't use
+one of the story's attempts. omniralph caps rounds separately and sets the
+story aside in either of these cases:
+
+- **Round cap.** It reaches 8 rounds (the coding task's `maxRoundsPerStory`).
+- **Stall.** The review story reports its critique score as a `metric` each
+  round. When the best score hasn't improved for 3 rounds in a row
+  (`stallRounds`), omniralph stops and shows the score trend.
+
+A reply of `/continue` (or any guidance reply) in the agent session gives the
+story fresh rounds and clears its score history. Tell the user this when you
+hand off.
 
 ---
 
@@ -47,10 +53,12 @@ Check these before anything else, and stop to fix any that fail:
 
 1. **impeccable is installed** in this session (the `impeccable:impeccable`
    skill). If not, tell the user to install the plugin and retry.
-2. **impeccable is available to cyralph's sessions.** Story sessions load the
-   cyralph host user's `~/.claude` plugins and skills and the repository's
-   `.claude/`. Ask the user to confirm the plugin is installed on the cyralph
-   host. If it isn't, the review story can't run, so this must be fixed first.
+2. **impeccable is available to omniralph's sessions.** Story sessions run on
+   an Omniralph harness and load the harness user's `~/.claude` plugins and
+   skills and the repository's `.claude/`. Ask the user to confirm the plugin
+   is installed for that user on every harness that accepts `coding` tasks (or
+   the one the repository is pinned to). If it isn't, the review story can't
+   run, so this must be fixed first.
 3. **Design context exists.** If the target repo has no `PRODUCT.md`, run
    `/impeccable init`. If it has no `DESIGN.md`, run `/impeccable document`.
    If the user would rather not do this now, make it the first story of the
@@ -70,7 +78,7 @@ Check these before anything else, and stop to fix any that fail:
    app's dev server, plus a committed script that captures named screens at
    given viewports and themes. Look for one. If there is none, the epic's
    first story builds it.
-   - Ask how the cyralph host runs a browser: a Playwright MCP, a local
+   - Ask how the harness host runs a browser: a Playwright MCP, a local
      Playwright/Chromium, or a container such as
      `mcr.microsoft.com/playwright:<version>`. Ask this with your Step 1
      questions, not at the end.
@@ -107,7 +115,7 @@ answers:
    - Some users want everything fixed while the loop is still running:
      a failing round also files P2s, or P3s. If so, bundle the P3s into one
      polish follow-up per round, so they cost one story rather than several.
-   - cyralph makes **every** follow-up of a failing round block the review
+   - omniralph makes **every** follow-up of a failing round block the review
      story. So whatever a failing round files is built before the next round,
      and a completing round should file nothing that isn't meant to join the
      epic as more work.
@@ -189,7 +197,7 @@ In story order:
    contrast script, a test, a grep, or a named screenshot inspected.
 4. **The review story**, last, blocked by every other sub-issue. Title:
    `Validate the UI/UX bar and functional requirements`. Keep the leading
-   "Validate" so cyralph's triage recognises it as the validation story.
+   "Validate" so omniralph's triage recognises it as the validation story.
    Body: the template below.
 
 Then write the functional requirements (`common.md`). In a UI loop they are
@@ -213,7 +221,7 @@ This story reviews; it doesn't fix. Everything it finds is reported as follow-up
 1. **Gates.** Run every quality gate, the screenshot command and `impeccable detect` on <target> (and on each consumer listed in the epic). Record the output.
 2. **Requirements.** Verify FR-1 … FR-n and every completed story's acceptance criteria, with evidence (command output or screenshot path).
 3. **Critique.** Run `/impeccable critique <target>` at <viewports> in <themes>, anchored to the previous review as below. <Lean mode only: if `.impeccable/critique/` holds no `*__<slug>.md` yet, this is the baseline round: run a normal, unanchored critique.>
-4. **Keep the report.** Leave it in the worktree under `.impeccable/critique/`. cyralph commits it with the round (as `wip(…)` when the round reports blocked), and the next round anchors to it.
+4. **Keep the report.** Leave it in the worktree under `.impeccable/critique/`. omniralph commits it with the round (as `wip(…)` when the round reports blocked, which needs the quality gates to pass), and the next round anchors to it.
 5. **Post one comment** on this issue: `Round N: PASS|FAIL`, the score and its trend across rounds, P0/P1/P2 counts, the gates table, the FR table, and the follow-ups filed.
 
 ## Anchoring the critique
@@ -233,6 +241,7 @@ Detector findings checked and judged false positives go in `.impeccable/critique
 
 * **The bar is cleared** (score ≥ <N>/40, zero <blocking severities>, every gate and FR passes): report **complete** with no follow-ups. List any remaining lower-severity notes in the comment only; the loop is done.
 * **Otherwise** report **blocked**, with follow-ups for every <filed severities> finding and every failing FR or gate.
+* **Every round**, report the score as `metric`: name `critique score`, the value, direction `higher` and target <N>. Keep the name and direction the same every round: the loop is set aside when the best score stops improving.
   * Group findings into at most 8 follow-ups, each one session of work, layer by layer. Each states its finding, the evidence and checkable acceptance criteria.
   * Reuse an open sub-issue that already covers a finding rather than filing a duplicate.
   * Anything outside the epic's Non-Goals is a P3 note, never a follow-up.
@@ -257,12 +266,14 @@ order, the review story blocked by all of them, and the post-creation steps.
 
 Hand off as in `common.md`. Tell the user two things:
 
-- It runs at most 3 rounds before it needs a `/continue` (see "Round limit").
+- It runs at most 8 rounds, and stops sooner if the score doesn't improve for
+  3 rounds in a row. A `/continue` reply gives it fresh rounds (see "Round
+  limit").
 - To review the loop's progress, check the review story's comments.
 
 ## Checklist before creating the issues
 
-- [ ] impeccable confirmed installed here and on the cyralph host
+- [ ] impeccable confirmed installed here and on the omniralph harness hosts
 - [ ] `PRODUCT.md`/`DESIGN.md` committed, or a setup story creates them
 - [ ] A screenshot command exists, or a setup story builds it; host browser method recorded
 - [ ] Seeded: baseline critique committed, decisions recorded in Design Considerations

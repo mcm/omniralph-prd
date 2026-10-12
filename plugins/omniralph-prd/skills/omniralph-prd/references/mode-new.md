@@ -60,7 +60,7 @@ they confirm, use the Linear MCP tools to create the issue(s), following
 
 - Create a new parent/epic issue.
   - Give it a descriptive but concise name.
-  - Use the PRD body (with the routing and branch lines) as the issue
+  - Use the PRD body (with the branch line, if any) as the issue
     description.
   - Set `blockedBy` for any issue the whole epic waits on.
 - Create a sub-issue for each user story, in story order.
@@ -77,10 +77,10 @@ they confirm, use the Linear MCP tools to create the issue(s), following
 
 - Create one new issue.
   - Give it a descriptive but concise name.
-  - Use the PRD body (with the routing and branch lines) as the description.
+  - Use the PRD body (with the branch line, if any) as the description.
   - Append the functional requirements and then a consolidated
     `## Acceptance Criteria` checklist as the last section.
-  - Follow the single-issue formatting rules in `common.md` so cyralph doesn't
+  - Follow the single-issue formatting rules in `common.md` so omniralph doesn't
     split it into sub-issues.
   - Set `blockedBy` for any issue it waits on.
   - Do **not** create any sub-issues.
@@ -101,7 +101,9 @@ they confirm, use the Linear MCP tools to create the issue(s), following
       steps for a person are separate manual sub-issues
 - [ ] If decomposed: every story has a priority and its dependencies as
       blocks relations; no story IDs or metadata in titles or bodies
-- [ ] Repository tag added (unless routing is configured otherwise)
+- [ ] Issue is in the team/project (or has the label) that routes it; no
+      `[repo=…]` tag unless the user asked for one
+- [ ] No `## Open Questions` section left in any description
 
-Once the issue is created, offer to delegate it to cyralph, then tell the user
+Once the issue is created, offer to delegate it to omniralph, then tell the user
 you're done.

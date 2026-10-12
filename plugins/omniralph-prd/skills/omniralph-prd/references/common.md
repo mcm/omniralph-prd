@@ -5,14 +5,16 @@ formats below. The mode files describe the step sequence; this file is the
 reference for *what the artifacts look like* and *how they are written to
 Linear*.
 
-The PRDs are executed by **cyralph**, a Linear agent that runs the Ralph loop:
+The PRDs are executed by **omniralph**, whose ralph loop runs an epic delegated
+to the Omniralph Linear agent:
 it takes the next ready sub-issue, hands it to a fresh, unattended Claude
 session, runs the quality gates, commits, marks the sub-issue Done, and moves on.
-When every story is done it opens the pull/merge request, and it fixes CI
-failures on that PR. cyralph reads stories from **Linear's own fields** — the
-issue identifier, title, priority, sub-issue order, workflow state, labels and
-"blocks" relations — plus the checkboxes in each description. It does not parse
-story IDs or metadata in titles or bodies, so don't write any.
+When every story is done it opens the pull/merge request, then fixes failed CI
+and Omniralph's own review findings on that PR. omniralph reads stories from
+**Linear's own fields** — the issue identifier, title, priority, sub-issue
+order, workflow state, labels and "blocks" relations — plus the checkboxes in
+each description. It does not parse story IDs or metadata in titles or bodies,
+so don't write any.
 
 ---
 
@@ -73,11 +75,12 @@ cannot do itself, unless the context already answers it:
 
 ### Quality gates
 
-The quality gates are the commands cyralph's agent runs before claiming a story
-complete (and, when the repository is configured for it, that cyralph itself
-runs to verify the story). The PR's CI runs only once, when the finished epic's
-PR opens, so **gates weaker than CI let every story pass and then fail at the
-end.** Make the gates match what CI enforces.
+The quality gates are the commands omniralph's agent runs before claiming a story
+complete, and that omniralph itself runs after the story to verify it (with the
+repository's **Run the PRD's quality gates** setting, on by default; the
+repository's own verify commands run first). The PR's CI runs only once, when
+the finished epic's PR opens, so **gates weaker than CI let every story pass
+and then fail at the end.** Make the gates match what CI enforces.
 
 Using the source access you established (SKILL.md → "Accessing the target
 project's source"), discover them yourself, in this order:
@@ -102,12 +105,12 @@ What quality commands must pass for each user story?
    D. Other: [specify your commands]
 
 For UI stories, should the agent verify in a browser?
-   A. Yes — the cyralph host has a browser tool (e.g. Playwright MCP); name it
+   A. Yes — the harness host has a browser tool (e.g. Playwright MCP); name it
    B. No, automated tests are sufficient
 ```
 
-Don't assume browser verification is available: cyralph runs stories
-unattended, so only ask for it if the user confirms the cyralph host has a
+Don't assume browser verification is available: omniralph runs stories
+unattended, so only ask for it if the user confirms the harness host has a
 browser tool.
 
 Every gate command must be non-interactive (no watch mode, no prompts) and
@@ -118,7 +121,7 @@ runnable from the repository root in a fresh checkout.
 ## PRD format
 
 Generate the PRD with these sections. This becomes the description of the epic
-(or the single issue) in Linear, and cyralph includes the epic's full
+(or the single issue) in Linear, and omniralph includes the epic's full
 description in every story's prompt. The numbers below are for this reference
 only — write each heading as a plain `##` heading (`## Goals`, not
 `## 2. Goals`).
@@ -130,7 +133,7 @@ Brief description of the feature and the problem it solves.
 Specific, measurable objectives (bullet list).
 
 ### 3. Quality Gates
-**CRITICAL.** cyralph finds the gates by exact format, so follow it exactly:
+**CRITICAL.** omniralph finds the gates by exact format, so follow it exactly:
 
 - The heading is literally `## Quality Gates`.
 - Each command is its own bullet, and the command is the **first backticked
@@ -169,14 +172,18 @@ How you will know the feature succeeded (bullet list). Specific and measurable.
 
 ### Routing and branch lines
 
-After the sections, add these lines when they apply:
+Omniralph routes an issue to a repository by its **team, project or label**,
+configured per repository in Omniralph. Expect that routing to be in place, and
+put the issue in the team or project (or give it the label) that routes it.
 
-- **Repository tag.** If you know the target repository (from your source
-  access, the context, or `LINEAR.md`), add `[repo=<owner/name>]` on its own
-  line so cyralph doesn't have to ask which repository to work in. Skip it if
-  `LINEAR.md` says routing is done by team, project or label.
+- **Repository tag (only when asked).** Don't add a `[repo=…]` tag unless the
+  user asks for one. A tag overrides the routing: an issue tagged with a
+  repository that doesn't have ralph enabled isn't routed at all. When asked,
+  add `[repo=<full path>]` on its own line, with the repository's full path
+  (`acme/app`, `group/subgroup/project`). One repository per tag, and no
+  branch in it.
 - **Branch (optional).** If the user wants a specific branch name, add
-  `` > Branch: `name` ``. Otherwise cyralph uses Linear's branch name for the
+  `` > Branch: `name` ``. Otherwise omniralph uses Linear's branch name for the
   issue.
 
 ---
@@ -229,7 +236,7 @@ acceptance-criteria checklist.
 US-002, … so dependencies are easy to discuss. These labels are for the
 conversation only: they never go into Linear titles or bodies. Once the
 sub-issues exist, their Linear identifiers (e.g. `ENG-12`) are the story names —
-cyralph uses them in plans, prompts and commit messages
+omniralph uses them in plans, prompts and commit messages
 (`feat(ENG-12): Add priority field to database`).
 
 **Present each story as:**
@@ -264,9 +271,9 @@ As a [user], I want [feature] so that [benefit].
   section, Story ID, priority or dependency lines. Priority, order and
   dependencies are set as Linear fields.
 - The heading is exactly `## Acceptance Criteria` — no trailing colon, or
-  cyralph won't recognize the section.
+  omniralph won't recognize the section.
 
-**Order, priority and dependencies.** cyralph picks the next story that has no
+**Order, priority and dependencies.** omniralph picks the next story that has no
 open blockers: in-progress stories first, then by **Linear priority** (Urgent
 first, *No priority* last), then by the sub-issues' order in the parent.
 
@@ -280,7 +287,7 @@ first, *No priority* last), then by the sub-issues' order in the parent.
 
 **Manual stories.** A step for a person (see "Prerequisites and manual steps")
 is its own sub-issue with the **manual** label (or the label `LINEAR.md`
-names), wired with blocks relations like any other story. cyralph never works
+names), wired with blocks relations like any other story. omniralph never works
 it; stories that depend on it wait until a person moves it to Done.
 
 **Guidelines:**
@@ -313,7 +320,7 @@ issue's description alongside its acceptance criteria.
 In an epic, this is the last story, blocked by every other sub-issue. By
 default it is an **agent story**: the agent checks each FR against the code,
 adds missing tests and fixes gaps. A pass that changes nothing is fine. Human
-review happens on the PR, which cyralph opens once this story is done.
+review happens on the PR, which omniralph opens once this story is done.
 
 Title: `Validate functional requirements`. Description:
 
@@ -333,7 +340,7 @@ Stories covered: ENG-12, ENG-13, ENG-14
 ```
 
 Make it a **manual** story only if the user explicitly wants a person to sign
-off before the PR exists. Warn them first: cyralph opens the PR only after
+off before the PR exists. Warn them first: omniralph opens the PR only after
 every story is done, so a manual validation story means no PR at all until the
 person closes it — unless the repository sets `openPullRequestEarly`.
 
@@ -341,7 +348,7 @@ person closes it — unless the repository sets `openPullRequestEarly`.
 
 ## Writing quality
 
-The PRD will be executed by AI coding agents via cyralph, one story per fresh
+The PRD will be executed by AI coding agents via omniralph, one story per fresh
 session. Therefore:
 
 - Be explicit and unambiguous.
@@ -359,8 +366,8 @@ file), the target structure is one of:
 
 **Epic (L or larger):**
 
-- A parent/epic issue whose description is the PRD body, including the routing
-  and branch lines.
+- A parent/epic issue whose description is the PRD body, including the branch
+  line (and a repository tag, if the user asked for one).
 - One sub-issue per user story, created **in story order**, each with:
   - `parentId` = the epic, `title` = the plain story title, `description` = the
     story body in the format above;
@@ -371,7 +378,7 @@ file), the target structure is one of:
 - One final functional-requirements validation sub-issue (see above),
   `blockedBy` every other sub-issue.
 - If the epic as a whole waits on another issue, make the **epic** `blockedBy`
-  it: cyralph won't start any story until it's done.
+  it: omniralph won't start any story until it's done.
 
 After creating them:
 
@@ -385,10 +392,10 @@ After creating them:
 
 **Single issue (smaller than L):**
 
-- One issue whose description is the PRD body and routing lines, then the
+- One issue whose description is the PRD body and branch line, then the
   functional requirements, then a consolidated acceptance-criteria checklist
   under `## Acceptance Criteria` as the **last** section. No sub-issues.
-- cyralph treats the whole description as one story, and would split it into
+- omniralph treats the whole description as one story, and would split it into
   sub-issues if it looked like a PRD with stories. So in a single issue:
   - no story-style headings such as `### US-001: …`, `### FR-1: …` or
     `### Feature 1.1: …` — keep FRs and criteria as bullets and checkboxes;
@@ -400,11 +407,11 @@ Whenever removing a story/issue in Linear, **cancel** it (do not delete). Never
 modify a sub-issue that is already completed or in progress, and never
 restructure an issue, without explicit user confirmation.
 
-### Handing off to cyralph
+### Handing off to omniralph
 
 Once everything is written, offer to delegate the epic (or single issue) to
-cyralph (`save_issue` with `delegate`, using the agent name from `LINEAR.md` or
-asking for it). Delegating is what starts the run. Only delegate after the user
+omniralph (`save_issue` with `delegate`, using the agent name from `LINEAR.md`,
+else `Omniralph`). Delegating is what starts the run. Only delegate after the user
 confirms.
 
 ---
@@ -453,8 +460,6 @@ These commands must pass for every user story:
 - Users can change priority in under 2 clicks
 - High-priority tasks immediately visible at top of lists
 - No regression in task list performance
-
-[repo=acme/app]
 ```
 
 ### User Stories

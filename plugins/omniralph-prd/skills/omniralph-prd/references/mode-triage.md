@@ -23,6 +23,10 @@ Before asking anything, use the Linear MCP tools to fetch the target issue.
 - Note the issue's current state, priority, and assignee.
 - Identify what is already specified vs. what is missing relative to the PRD
   format.
+- If the description has a `## Open Questions` section (Omniralph's automated
+  triage writes one), those questions are gaps to resolve with the user. Fold
+  the answers into the PRD and drop the section: omniralph won't start the
+  issue while it has open questions.
 
 Then summarize for the user:
 
@@ -81,8 +85,9 @@ In both cases:
 
 - Update the title to a descriptive but concise name (preserve the existing
   title if it already fits).
-- Replace the description with the PRD body, with the routing and branch
-  lines.
+- Replace the description with the PRD body and the branch line, if any.
+  Keep an existing `[repo=…]` tag only if the user wants it (see `common.md` →
+  "Routing and branch lines").
 - Preserve the existing labels, priority, assignee and blocking relations
   unless the user requests otherwise. Add `blockedBy` for any new
   prerequisites.
@@ -102,7 +107,7 @@ In both cases:
 
 - Append the functional requirements and then a consolidated
   `## Acceptance Criteria` checklist as the last section.
-- Follow the single-issue formatting rules in `common.md` so cyralph doesn't
+- Follow the single-issue formatting rules in `common.md` so omniralph doesn't
   split it into sub-issues.
 - Do **not** create any sub-issues.
 
@@ -123,7 +128,9 @@ In both cases:
       steps for a person are separate manual sub-issues
 - [ ] If decomposed: every story has a priority and its dependencies as
       blocks relations; no story IDs or metadata in titles or bodies
-- [ ] Repository tag added (unless routing is configured otherwise)
+- [ ] Issue is in the team/project (or has the label) that routes it; no
+      `[repo=…]` tag unless the user asked for one
+- [ ] No `## Open Questions` section left in any description
 
-Once the issue is updated, offer to delegate it to cyralph, then tell the user
+Once the issue is updated, offer to delegate it to omniralph, then tell the user
 you're done.
