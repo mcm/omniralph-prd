@@ -219,6 +219,10 @@ without explicit user confirmation in this session.
 - [ ] Re-estimated the overall t-shirt size and confirmed (or proposed a change
       to) the structure
 - [ ] Reconciled every existing story (keep / edit / add / remove / reorder)
+- [ ] New or edited stories split by feature, not by phase; each includes its
+      own tests, error handling and basic hardening
+- [ ] Full scope stated up front; nothing labelled future/stretch/v2 unless the
+      user did, and genuinely optional items were put to the user
 - [ ] Preserved FR numbers; referred to stories by Linear identifier
 - [ ] Acceptance criteria are verifiable (not vague) and can be checked by the
       agent inside the repo

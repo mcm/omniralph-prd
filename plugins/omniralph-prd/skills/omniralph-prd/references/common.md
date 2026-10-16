@@ -60,6 +60,19 @@ After each response, decide whether to:
 
 Typically 2–4 rounds are needed — fewer for small, well-specified work.
 
+### Full scope up front
+
+Everything in the PRD is in scope for its goal, and the whole epic gets built.
+
+- When you present a PRD, state its full scope. Don't silently trim or defer
+  anything the goal needs.
+- Don't label stories, requirements or criteria "future enhancement",
+  "stretch", "v2", "nice to have" or similar unless the user marked them that
+  way.
+- If something is genuinely optional, name it and ask the user whether it's in
+  or out (a lettered question works). If it's in, it's a normal story or
+  requirement. If it's out, it goes under Non-Goals.
+
 ### Prerequisites and manual steps
 
 Ask about anything the work depends on that an AI agent working in the repo
@@ -155,7 +168,9 @@ For UI stories, also:
 ```
 
 ### 4. Non-Goals (Out of Scope)
-What this feature will NOT include. Critical for managing scope.
+What this feature will NOT include. Critical for managing scope. Only list
+what the user agreed is out: this section is not a place to park work the goal
+needs.
 
 ### 5. Design Considerations (Optional)
 UI/UX requirements, links to mockups if available, relevant existing components
@@ -232,6 +247,20 @@ enough to finish in one session. Each needs a title, a description ("As a
 [user], I want [feature] so that [benefit]"), and a verifiable
 acceptance-criteria checklist.
 
+**Split by feature, not by phase.** Each story is a slice of the feature that
+works end to end: "Auth system" is one story, not four stories for scaffolding,
+logic, tests and polish. If a feature is too big for one session, split it
+into smaller features (e.g. "Sign up with email", "Password reset"), each one
+complete on its own.
+
+- A story's tests, error handling and basic hardening (input validation,
+  auth checks, safe failure) belong in the story that introduces the code.
+  Write them as acceptance criteria there, never as a separate story.
+- A story never leaves stubs, placeholders or TODOs for anything in its own
+  acceptance criteria, and never relies on a later story to finish its code.
+  If part of the work can't be finished in the story, it's a different
+  feature: make it its own story, wired with a blocks relation.
+
 **Drafting labels.** While drafting with the user, refer to stories as US-001,
 US-002, … so dependencies are easy to discuss. These labels are for the
 conversation only: they never go into Linear titles or bodies. Once the
@@ -302,7 +331,8 @@ it; stories that depend on it wait until a person moves it to Done.
   nothing that needs human judgment, production access or an external account.
   A story whose criteria the agent can never meet is retried, then set aside,
   and every story after it is blocked.
-- Include quality stories for tests and documentation as needed.
+- Put tests and any docs a story needs in that story's acceptance criteria:
+  no separate testing, hardening or documentation stories.
 
 ---
 
@@ -356,7 +386,8 @@ The PRD will be executed by AI coding agents via omniralph, one story per fresh
 session. Therefore:
 
 - Be explicit and unambiguous.
-- User stories should be small (completable in one session).
+- User stories should be small (completable in one session), each a complete
+  feature slice that includes its own tests and error handling.
 - Acceptance criteria must be machine-verifiable, by the agent, in the repo.
 - Include specific file paths if you know them.
 - Reference existing code patterns in the project.
@@ -476,6 +507,8 @@ persists across sessions.
 
 - [ ] Add priority column to tasks table: 'high' | 'medium' | 'low' (default 'medium')
 - [ ] Generate and run migration successfully
+- [ ] Saving a task with a value outside 'high' | 'medium' | 'low' is rejected
+- [ ] Tests cover the default value and the rejected value
 - [ ] Typecheck passes
 ```
 
@@ -490,6 +523,7 @@ attention first.
 
 - [ ] Each task card shows colored priority badge (red=high, yellow=medium, gray=low)
 - [ ] Priority visible without hovering or clicking
+- [ ] Component test covers the badge for each priority level
 - [ ] Typecheck passes
 ```
 

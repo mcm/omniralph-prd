@@ -127,6 +127,12 @@ and fold it into your understanding before you start asking questions.
 - Estimate the overall t-shirt size and let it decide the structure: **L or
   larger → an epic with sub-issues; smaller than L → a single self-contained
   issue.** See `common.md` for the exact rule.
+- Everything in the PRD is in scope. State the full scope up front, never
+  label work "future", "stretch" or "v2" unless the user did, and ask about
+  anything genuinely optional instead of silently deferring it.
+- Split stories by feature, not by phase (no separate scaffolding, tests or
+  polish stories). Tests, error handling and basic hardening go in the story
+  that introduces the code, and no story leaves TODOs for its own criteria.
 - Get explicit user confirmation before creating or modifying anything in
   Linear. Never silently restructure an issue, and never modify a sub-issue
   that is already completed or in progress without confirmation.

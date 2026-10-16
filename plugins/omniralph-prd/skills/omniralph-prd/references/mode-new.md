@@ -92,6 +92,10 @@ they confirm, use the Linear MCP tools to create the issue(s), following
 - [ ] Estimated the overall t-shirt size and chose the structure accordingly
       (epic only if L or larger)
 - [ ] If decomposed: user stories are small, atomic, and specific
+- [ ] If decomposed: stories split by feature, not by phase; each includes its
+      own tests, error handling and basic hardening
+- [ ] Full scope stated up front; nothing labelled future/stretch/v2 unless the
+      user did, and genuinely optional items were put to the user
 - [ ] Acceptance criteria are verifiable (not vague)
 - [ ] Functional requirements are numbered and unambiguous
 - [ ] Non-goals section defines clear boundaries
