@@ -8,7 +8,7 @@ description: >-
   Also creates a looping UI/UX improvement epic (impeccable critique rounds
   until a quality bar is cleared). Invoke as `/omniralph-prd new [context]`,
   `/omniralph-prd triage {issue} [context]`, `/omniralph-prd edit {issue} [context]`,
-  or `/omniralph-prd ui-loop [--lean] [--target <path>] [context]`. Requires the
+  or `/omniralph-prd ui-loop [--lean] [--target path] [context]`. Requires the
   Linear MCP to be configured.
 ---
 
