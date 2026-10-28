@@ -97,7 +97,11 @@ In both cases:
 
 - Create a sub-issue for each user story, in story order: plain story title,
   story body in the prescribed format, a priority, its `blockedBy`
-  dependencies, and the manual label for steps for a person.
+  dependencies (sibling sub-issues only), and the manual label for steps for
+  a person.
+- Every issue outside the epic that the epic or any story waits on goes on the
+  epic's `blockedBy` (the issue being triaged keeps its existing blockers).
+  Never block a sub-issue on an issue outside the epic.
 - Create the functional-requirements validation sub-issue (format in
   `common.md`), blocked by all the other sub-issues.
 - Do the post-creation steps: replace drafting labels with Linear identifiers,
@@ -132,6 +136,8 @@ In both cases:
       steps for a person are separate manual sub-issues
 - [ ] If decomposed: every story has a priority and its dependencies as
       blocks relations; no story IDs or metadata in titles or bodies
+- [ ] If decomposed: no story is blocked by an issue outside the epic; every
+      outside dependency is on the epic itself
 - [ ] Issue is in the team/project (or has the label) that routes it; no
       `[repo=…]` tag unless the user asked for one
 - [ ] No `## Open Questions` section left in any description

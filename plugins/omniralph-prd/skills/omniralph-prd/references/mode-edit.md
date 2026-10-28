@@ -145,6 +145,11 @@ Guidelines:
   `new-2`, … until they are created.
 - Each kept/edited/new story follows the format in `common.md`, with a
   priority, blocks relations, and the manual label where it applies.
+- Stories may only be blocked by other stories in the same epic. A new
+  dependency on an issue outside the epic goes on the epic, not the story. If
+  an existing sub-issue is blocked by an issue outside the epic, flag it and
+  propose moving that relation to the epic (`removeBlockedBy` on the story,
+  `blockedBy` on the epic).
 - **Legacy markup** (if the user chose to normalize): remove `## Ralph Metadata`
   sections and `US-001:` title prefixes from pending stories only. omniralph uses
   a legacy `Ralph Priority` when a sub-issue has no Linear priority, so set the
@@ -185,7 +190,7 @@ confirm, use the Linear MCP tools:
 - Per story reconciliation: **Keep** → no action; **Edit** → update the
   sub-issue's title/description; **Add** → create a new sub-issue (see
   `common.md` → "Linear structure reference") with its priority, `blockedBy`
-  dependencies and labels; **Remove** → cancel the sub-issue (do not delete)
+  dependencies (sibling sub-issues only) and labels; **Remove** → cancel the sub-issue (do not delete)
   and note it in the Change Log; **Reorder** → update blocks relations
   (`blockedBy` / `removeBlockedBy`) and priorities to reflect the new order.
   Blocks relations carry the order; the sub-issue order in the parent is
@@ -228,6 +233,8 @@ without explicit user confirmation in this session.
       agent inside the repo
 - [ ] Every new or edited story has a priority and its dependencies as blocks
       relations; no story IDs or metadata added to titles or bodies
+- [ ] No story is blocked by an issue outside the epic; every outside
+      dependency is on the epic itself
 - [ ] Quality gates match CI and follow the exact `## Quality Gates` format
 - [ ] Warned the user if omniralph is running on the epic or a Done story is
       being reopened

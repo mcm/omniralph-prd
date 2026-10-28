@@ -62,12 +62,14 @@ they confirm, use the Linear MCP tools to create the issue(s), following
   - Give it a descriptive but concise name.
   - Use the PRD body (with the branch line, if any) as the issue
     description.
-  - Set `blockedBy` for any issue the whole epic waits on.
+  - Set `blockedBy` for every issue outside the epic that the epic or any of
+    its stories waits on.
 - Create a sub-issue for each user story, in story order.
   - Use the plain story title as the sub-issue title (no story ID).
   - Use the story body as the description, following the format carefully.
-  - Set its priority, its `blockedBy` dependencies, and the manual label for
-    steps for a person.
+  - Set its priority, its `blockedBy` dependencies (sibling sub-issues
+    only, never issues outside the epic), and the manual label for steps for
+    a person.
 - Create the functional-requirements validation sub-issue (format in
   `common.md`), blocked by all the other sub-issues.
 - Do the post-creation steps: replace drafting labels with Linear identifiers,
@@ -105,6 +107,8 @@ they confirm, use the Linear MCP tools to create the issue(s), following
       steps for a person are separate manual sub-issues
 - [ ] If decomposed: every story has a priority and its dependencies as
       blocks relations; no story IDs or metadata in titles or bodies
+- [ ] If decomposed: no story is blocked by an issue outside the epic; every
+      outside dependency is on the epic itself
 - [ ] Issue is in the team/project (or has the label) that routes it; no
       `[repo=…]` tag unless the user asked for one
 - [ ] No `## Open Questions` section left in any description

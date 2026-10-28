@@ -138,6 +138,9 @@ and fold it into your understanding before you start asking questions.
   that is already completed or in progress without confirmation.
 - Never write story IDs or metadata into Linear titles or bodies. Priority,
   order, dependencies and manual steps are Linear fields (see `common.md`).
+- A story in an epic may only be blocked by other stories in the same epic.
+  Never set a story's `blockedBy` to an issue outside its epic; if a story
+  needs an outside issue, the **epic** is `blockedBy` that issue instead.
 - Express every ordering constraint as a blocks relation. Sub-issue order in
   the parent is cosmetic: never ask the user to drag or reorder sub-issues,
   and never comment on where one ended up.

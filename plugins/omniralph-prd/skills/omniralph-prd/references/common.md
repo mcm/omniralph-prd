@@ -79,8 +79,9 @@ Ask about anything the work depends on that an AI agent working in the repo
 cannot do itself, unless the context already answers it:
 
 - **Other Linear issues** that must land first (another epic, a backend change,
-  a design task). These become "blocks" relations (see "Linear structure
-  reference").
+  a design task). These become "blocks" relations **on the epic itself**, never
+  on its stories (see "Stories may only be blocked by stories in the same
+  epic").
 - **Steps for a person**: provisioning secrets or credentials, DNS, third-party
   console or app-store setup, data migrations run by ops, design sign-off.
   These become separate **manual** sub-issues, never acceptance criteria on an
@@ -310,6 +311,15 @@ first, *No priority* last), then by the sub-issues' order in the parent.
   that stops a story from running early, and they alone must make the epic
   run correctly. If a story would break when run before another, that's a
   missing blocks relation — add it.
+- **Stories may only be blocked by stories in the same epic.** A story's
+  `blockedBy` list must contain sub-issues of its own epic and nothing else —
+  never an issue outside the epic (another epic, a story in another epic, a
+  standalone issue, a backend or design task). This is a hard rule with no
+  exceptions. If any story is functionally blocked by an outside issue, set
+  that issue on the **epic's** `blockedBy` instead, even if only one story
+  needs it; omniralph then waits for it before starting any story. Manual
+  steps for a person are sub-issues of the epic, so stories may depend on
+  them.
 - Give every story a priority. Use one priority for the whole epic unless some
   stories genuinely matter more.
 - Sub-issue order in the parent is cosmetic: it only breaks ties between
@@ -407,20 +417,24 @@ file), the target structure is one of:
   - `parentId` = the epic, `title` = the plain story title, `description` = the
     story body in the format above;
   - `priority` (1 Urgent, 2 High, 3 Medium, 4 Low) — always set;
-  - `blockedBy` = the sub-issues (and any issues outside the epic) it depends
-    on;
+  - `blockedBy` = only the sibling sub-issues of this epic it depends on —
+    **never** an issue outside the epic (see "Stories may only be blocked by
+    stories in the same epic");
   - the **manual** label (`addLabels`) for steps for a person.
 - One final functional-requirements validation sub-issue (see above),
   `blockedBy` every other sub-issue.
-- If the epic as a whole waits on another issue, make the **epic** `blockedBy`
-  it: omniralph won't start any story until it's done.
+- Every dependency on an issue outside the epic — whether the whole epic or
+  just one story needs it — goes on the **epic's** `blockedBy`: omniralph
+  won't start any story until it's done.
 
 After creating them:
 
 1. Replace drafting labels with Linear identifiers wherever they ended up in a
    description (story cross-references, the validation sub-issue's "Stories
    covered" line).
-2. Verify every dependency you drafted exists as a blocks relation.
+2. Verify every dependency you drafted exists as a blocks relation, and that
+   no sub-issue is blocked by anything outside the epic. If one is, remove that
+   relation from the sub-issue and add it to the epic instead.
 
 **Single issue (smaller than L):**
 
