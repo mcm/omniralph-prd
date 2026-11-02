@@ -16,7 +16,8 @@ Before doing anything else, use the Linear MCP tools to fetch the
 issue and all of its sub-issues.
 
 - Read the epic's (or the task's) full description.
-- Enumerate every sub-issue, including the validation audit if one exists.
+- Enumerate every sub-issue, including a legacy `Validate functional
+  requirements` task if one exists.
 - Note each sub-issue's identifier, title, description, status, priority,
   labels (especially the manual label), and blocking relations.
 - Note any sub-issues already completed, in progress, or cancelled: these
@@ -36,7 +37,8 @@ Then summarize for the user:
   in-progress task is mid-run, and that changes are picked up by replying in
   the Omniralph session or by re-delegating.
 - The tasks that exist today, in order.
-- Whether the validation audit exists.
+- Whether a legacy validation task exists (it still runs as a task; new epics
+  don't get one, since Omniralph audits each epic before its pull request).
 - The current state of each sub-issue (completed tasks cannot be meaningfully
   edited; in-progress tasks should be flagged before changing).
 
@@ -152,10 +154,10 @@ Guidelines:
   uses a legacy `Ralph Priority` when a sub-issue has no Linear
   priority, so set the Linear priority first. Leave completed and
   in-progress tasks untouched.
-- Make sure the validation audit follows `common.md`. If it is labelled
-  manual, explain that Omniralph opens the pull request only once every task is
-  done (unless the repo sets `openPullRequestEarly`), and ask whether to keep
-  it that way.
+- Don't add a validation task. A legacy one is kept as a task; if it is
+  labelled manual, explain that Omniralph opens the pull request only once
+  every task is done (unless the repo sets `openPullRequestEarly`), and ask
+  whether to keep it that way.
 
 ## Step 6: Update the requirements
 
@@ -196,10 +198,10 @@ they confirm, use the Linear MCP tools:
   is cosmetic, so don't mention it to the user.
 - Replace any `new-N` labels in descriptions with the new Linear
   identifiers.
-- Update the validation audit to list the revised requirements, and make sure
-  it is blocked by every new task too.
-- If a single task is being turned into an epic, create the tasks and the
-  validation audit as in the `new` and `triage` final steps.
+- If the epic has a legacy validation task, update it to list the revised
+  requirements, and make sure it is blocked by every new task too.
+- If a single task is being turned into an epic, create the tasks as in the
+  `new` and `triage` final steps, with no validation task.
 
 **If the issue stays (or becomes) a single task, smaller than L:**
 
@@ -237,7 +239,8 @@ without explicit user confirmation in this session.
 - [ ] Steps for a person are separate manual tasks
 - [ ] Every task has a priority, and its dependencies as blocks relations the
       dependency rules allow; no drafting labels or metadata in titles or bodies
-- [ ] An epic ends with the validation audit, blocked by every other task
+- [ ] An epic has no validation task: Omniralph audits its requirements
+      before its pull request opens
 - [ ] The issue is in the team or project (or has the label) that routes it; no
       `[repo=…]` tag unless the user asked for one
 - [ ] No `## Open Questions` section left in any description

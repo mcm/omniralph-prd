@@ -194,11 +194,10 @@ In task order, each in the story format with its `Covers:` line:
    criterion points to a finding and is evidence an agent can check: a lint
    rule, the contrast script, a command's output, or a named screenshot
    inspected.
-4. **The review task**, last, blocked by every other sub-issue. It takes the
-   place of the validation audit and covers every requirement. Title:
-   `Validate the UI/UX bar and functional requirements`. Keep the leading
-   "Validate" so Omniralph's triage recognises it as the validation task.
-   Body: the template below.
+4. **The review task**, last, blocked by every other sub-issue. It covers
+   every requirement. Title:
+   `Validate the UI/UX bar and functional requirements`. Body: the template
+   below.
 
 ### Review task template
 
@@ -257,8 +256,8 @@ Detector findings checked and judged false positives go in `.impeccable/critique
 
 Show the user a summary table before writing: the size, the tasks with
 priority and blockers, the bar, and the mode. Then follow `mode-new.md` →
-"Final step" for an epic, with the review task in place of the validation
-audit. That covers the epic issue, the sub-issues in task order, the review
+"Final step" for an epic, with the review task as the last sub-issue. That
+covers the epic issue, the sub-issues in task order, the review
 task blocked by all of them, and the post-creation steps.
 
 When you finish, tell the user two things (and don't offer to delegate; see

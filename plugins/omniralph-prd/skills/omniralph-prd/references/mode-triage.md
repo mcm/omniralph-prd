@@ -8,9 +8,9 @@ a loose collection of thoughts, a feature request with partial detail, or an
 older format. Your job is to elicit the missing context and write the full
 structure back to the **same** issue.
 
-Depending on the size, the issue becomes an epic (with one sub-issue per task
-and the validation audit, when the work is **L** or larger) or stays a single
-story or fix (when smaller).
+Depending on the size, the issue becomes an epic (with one sub-issue per task,
+when the work is **L** or larger) or stays a single story or fix (when
+smaller).
 
 Follow the planning rules in `common.md`.
 
@@ -71,7 +71,8 @@ resulting structure before continuing.
 
 Split the epic into tasks by the Splitting rule, in the story or fix format,
 each with its `Covers:` line, and present them as `common.md` → "Drafting
-tasks with the user" shows. End with the validation audit.
+tasks with the user" shows. Don't add a validation task: Omniralph audits the
+epic against its requirements before its pull request opens.
 
 ## Final step: update the issue in Linear
 
@@ -96,7 +97,6 @@ In both cases:
 - Create a sub-issue for each task, in task order: plain task title, the task
   in the story or fix format, a priority, its `blockedBy` dependencies, and
   the manual label for steps for a person.
-- Create the validation audit sub-issue, blocked by all the other sub-issues.
 - Do the post-creation steps: replace drafting labels with Linear
   identifiers, and verify the blocks relations.
 
@@ -128,7 +128,8 @@ In both cases:
 - [ ] Steps for a person are separate manual tasks
 - [ ] Every task has a priority, and its dependencies as blocks relations the
       dependency rules allow; no drafting labels or metadata in titles or bodies
-- [ ] An epic ends with the validation audit, blocked by every other task
+- [ ] An epic has no validation task: Omniralph audits its requirements
+      before its pull request opens
 - [ ] The issue is in the team or project (or has the label) that routes it; no
       `[repo=…]` tag unless the user asked for one
 - [ ] No `## Open Questions` section left in any description
