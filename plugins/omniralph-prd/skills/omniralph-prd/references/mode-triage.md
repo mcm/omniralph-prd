@@ -64,14 +64,17 @@ resulting structure before continuing.
 
 - **L or larger:** the epic format, with its numbered requirements. It
   replaces the current description.
-- **Smaller than L:** a single task in the fix format for a bug, the story
-  format otherwise, with no `Covers:` line.
+- **Smaller than L:** a single task in the task format: its three paragraphs,
+  framed as a fix for a bug and as a story otherwise. It replaces the current
+  description, including one in an older format (a story sentence with a
+  `Covers:` line, or `## Current behavior` / `## Expected behavior`
+  sections).
 
 ## Step 5: Tasks (L or larger only)
 
-Split the epic into tasks by the Splitting rule, in the story or fix format,
-each with its `Covers:` line, and present them as `common.md` → "Drafting
-tasks with the user" shows. Don't add a validation task: Omniralph audits the
+Split the epic into tasks by the Splitting rule, each in the task format (a
+fix for a bug, a story otherwise), and present them as `common.md` →
+"Drafting tasks with the user" shows. Don't add a validation task: Omniralph audits the
 epic against its requirements before its pull request opens.
 
 ## Final step: update the issue in Linear
@@ -94,15 +97,16 @@ In both cases:
 
 **If L or larger, turn it into an epic:**
 
-- Create a sub-issue for each task, in task order: plain task title, the task
-  in the story or fix format, a priority, its `blockedBy` dependencies, and
-  the manual label for steps for a person.
+- Create a sub-issue for each task, in task order: plain task title, the
+  task's three paragraphs, a priority, its `blockedBy` dependencies, the
+  manual label for steps for a person, and the bug label for a fix.
 - Do the post-creation steps: replace drafting labels with Linear
   identifiers, and verify the blocks relations.
 
 **If smaller than L, keep it a single task:**
 
-- The description is the story or fix, with `## Acceptance Criteria` last.
+- The description is the task's three paragraphs. Add the bug label if it is
+  a fix and doesn't have it yet.
 - Do **not** create any sub-issues.
 
 ## Checklist before updating the issue
@@ -114,11 +118,16 @@ In both cases:
       (an epic only if L or larger)
 - [ ] The epic has `## Problem`, `## Scope` (`### In` / `### Out`) and
       `## Requirements`, and nothing else besides the optional design and
-      technical notes; a single task is a story, or a fix for a bug
+      technical notes
+- [ ] Every task, a single one or an epic's, is three paragraphs ("I want you
+      to …", "Build it by …", "Don't stop until …") and nothing else: no
+      `Covers:` line, story sentence, behavior sections or checklist heading
+- [ ] Every constraint that must hold is in the "Don't stop until" paragraph,
+      not in "Build it by"
+- [ ] A fix has the bug label; a story doesn't
 - [ ] Requirements are numbered `FR-n` bullets, one behavior each, with WHEN
       or IF only for conditional behavior
-- [ ] Every requirement is owned by at least one task's `Covers:` line, and
-      every `Covers:` entry is one of the epic's requirements
+- [ ] Every requirement is built by at least one task
 - [ ] Tasks split by feature, not by phase, each small enough for one session
 - [ ] Full scope stated up front; nothing labelled future/stretch/v2 unless the
       user did, and genuinely optional items were put to the user

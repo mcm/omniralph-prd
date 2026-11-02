@@ -15,7 +15,7 @@ then fixes failed CI and its own review findings on it. Omniralph shows the
 agent the epic's description as background and the task's own description as
 the work. It reads tasks from **Linear's own fields** (identifier,
 title, priority, sub-issue order, workflow state, labels and "blocks"
-relations) plus the checkboxes in each description, never from identifiers or
+relations) plus the text of each description, never from identifiers or
 metadata written into titles or bodies, so don't write any.
 
 ---
@@ -64,7 +64,8 @@ Typically 2–4 rounds are needed, fewer for small, well-specified work.
 
 ### Story or fix
 
-Settle early whether the work is new work (a story) or a bug (a fix). For a
+Settle early whether the work is new work (a story) or a bug (a fix): both are
+written as the same three paragraphs, and a fix carries the bug label. For a
 bug, ask what happens now, what should happen instead, and what nearby
 behavior must not change, unless the issue already says.
 
@@ -109,7 +110,7 @@ These rules are the same ones Omniralph's own triage follows.
 ### Work items
 
 Every work item has a kind and a role.
-- **Kind.** A **Story** is new work or an enhancement. A **Fix** is a bug: something that should work and doesn't. Omniralph tells a Fix by its bug label or its fix format; everything else is a Story.
+- **Kind.** A **Story** is new work or an enhancement. A **Fix** is a bug: something that should work and doesn't. Omniralph tells a Fix by its bug label; everything else is a Story. Both are written in the task format.
 - **Role.** A **task** is one piece of work an agent finishes in one session; it has no sub-issues. An **epic** is a set of tasks (its sub-issues) that ship together in one pull request, once every task is done. A **feature** groups epics; nobody builds a feature directly. A task with no epic is a **standalone task**, and counts as an epic of one.
 - What an agent builds against is the task and its epic, never a planning document. Outcomes and success measures belong in planning documents, not in epics or tasks.
 
@@ -120,7 +121,7 @@ An epic's description has these sections, in this order, each as a plain `##` he
 - `## Scope`: what the epic delivers under `### In` and what it deliberately leaves out under `### Out`. Only what is really out of scope goes under Out: never relabel requested work as later or optional; if part of it truly is optional, ask a person.
 - `## Design` (optional): UI and UX decisions, flows, components to reuse.
 - `## Technical notes` (optional): constraints, integration points, real file paths, patterns to follow.
-- `## Requirements`: the numbered requirements (see Requirement wording). Every requirement is owned by at least one story.
+- `## Requirements`: the numbered requirements (see Requirement wording). Every requirement is built by at least one task.
 
 Nothing else: no title heading (the title is its own field), no checklist, no other sections. The repo decides which checks run on every task, so an epic never lists commands to run.
 
@@ -154,56 +155,25 @@ Nothing else: no title heading (the title is its own field), no checklist, no ot
 - FR-3: IF [unwanted condition], the system must [behavior].
 ```
 
-### Story format
+### Task format
 
-A story is a task for new work. Its description is exactly this shape:
-- One sentence: "As a [user], I want [capability] so that [benefit]."
-- A `Covers:` line naming the requirements of its epic the story owns, by identifier (`Covers: FR-2, FR-4`). A standalone story has no epic, and no `Covers:` line.
-- Optionally, short context: files to touch, patterns to follow.
-- `## Acceptance Criteria` (exactly that, no trailing colon), a `- [ ]` checklist, as the last section.
+A task's description is three paragraphs, in this order, each opening with its own words. Story and Fix are kinds of the same shape; a task is a Fix when it carries the bug label.
+1. **`I want you to …`** What to build, in one paragraph. For a Story: build what the task delivers, for whom and why. For a Fix: fix what is broken, saying what happens now and what should happen instead.
+2. **`Build it by …`** How to build it. For a Story: where the code lives, the patterns to follow and the files to touch. For a Fix: the likely cause of the bug and where the code lives.
+3. **`Don't stop until …`** When it is done, as prose or a short list. For a Story: the done criteria the loop can check and every constraint that must hold. For a Fix: the fixed behavior, every constraint that must hold and the nearby behavior that must not change.
 
-Don't repeat the title as a heading, and don't add identifiers, priority, dependency or metadata lines: those are Linear fields. Never refer to another story by a drafting label such as US-001.
+The agent building the task gets all three paragraphs, with the third as its stop condition. The agent verifying it gets only the first and third, with the change, so it judges the result rather than the approach.
 
-```markdown
-As a [user], I want [capability] so that [benefit].
-
-Covers: FR-1, FR-3
-
-[Optional context: files to touch, patterns to follow.]
-
-## Acceptance Criteria
-
-- [ ] [Evidence to check]
-- [ ] [More evidence to check]
-```
-
-### Fix format
-
-A fix is a task for a bug. Its description has these sections, in this order, each always present:
-- `## Current behavior`: what happens now, with the steps, input or state that show it.
-- `## Expected behavior`: what must happen instead.
-- `## Unchanged behavior`: the nearby behavior the fix must keep exactly as it is, so the fix doesn't break it.
-- `## Acceptance Criteria`: a `- [ ]` checklist, as the last section.
-
-A fix in an epic may add a `Covers:` line before `## Current behavior` when it owns requirements of the epic.
+Nothing else: no headings, no `Covers:` line, no checklist section. Don't repeat the title, and don't add identifiers, priority, dependency or metadata lines: those are Linear fields. Never refer to another task by a drafting label such as US-001.
 
 ```markdown
-## Current behavior
+I want you to [Story: build what the task delivers, for whom and why. Fix: fix what is broken, saying what happens now and what should happen instead.]
 
-[What happens now, with the steps or input that show it.]
+Build it by [Story: where the code lives, the patterns to follow and the files to touch. Fix: the likely cause of the bug and where the code lives.]
 
-## Expected behavior
-
-[What must happen instead.]
-
-## Unchanged behavior
-
-[Nearby behavior the fix must keep exactly as it is.]
-
-## Acceptance Criteria
-
-- [ ] [Evidence to check]
-- [ ] [More evidence to check]
+Don't stop until [Story: the done criteria the loop can check and every constraint that must hold. Fix: the fixed behavior, every constraint that must hold and the nearby behavior that must not change.]:
+- [A done criterion to check]
+- [A constraint that must hold]
 ```
 
 ### Requirement wording
@@ -211,21 +181,26 @@ A fix in an epic may add a `Covers:` line before `## Current behavior` when it o
 Requirements are a bullet list, numbered from 1: `- FR-1: The system must …`. Never headings.
 - One behavior per requirement, explicit and unambiguous, stated as what the system must do.
 - Add a condition only to conditional behavior: WHEN for an event or state (`- FR-2: WHEN a run fails, the system must …`), IF for an unwanted condition (`- FR-3: IF the token has expired, the system must …`). Behavior that always holds has no condition.
-- Stories name the requirements they own by identifier in their `Covers:` line, so keep identifiers stable once stories refer to them.
+- Tasks don't name the requirements they build: the epic audit checks every requirement against the finished branch on its own. Keep identifiers stable all the same, since people and audits refer to them.
 
 ### Checkable criteria
 
-Acceptance criteria are evidence to check, not tests to write. Each one names something an agent can confirm inside the repo, in the code, the output of a command or the behavior of the running software: "Deleting a project asks for confirmation first", not "Works correctly".
+A task's `Don't stop until` paragraph holds its done criteria: criteria the loop can check, each one evidence to check, not a test to write. Each one names something an agent can confirm inside the repo, in the code, the output of a command or the behavior of the running software: "Deleting a project asks for confirmation first", not "Works correctly".
 - Tests are written where the repo's conventions call for them on new behavior, never to prove a criterion. Don't phrase a criterion as a test to add.
 - A fix adds a regression test only where the affected code already has tests.
-- No outcomes or metrics: nothing measured after merge, such as adoption, a percentage improvement, fewer support requests or user satisfaction. Those belong in planning documents.
+- No criterion is an outcome or metric: nothing measured after merge, such as adoption, a percentage improvement, fewer support requests or user satisfaction. Those belong in planning documents.
 - Nothing that needs human judgement, production access or an outside account.
+
+### Constraints and guidance
+
+- Every constraint that must hold goes in the `Don't stop until` paragraph, never in the `Build it by` paragraph: no new table, never force-push, a behavior that must not change. The agent verifying the task never sees the second paragraph, so a constraint written there goes unchecked.
+- The `Build it by` paragraph is guidance: where to look and how it would likely be built. The agent building the task may depart from it when the code shows a better way, so it holds nothing the task is judged by.
 
 ### Sizing
 
 Size the whole body of work, not one piece of it: XS, S, M, L or XL. Weigh the number of distinct requirements, the surface it touches (database, API, UI, integrations, infrastructure), the unknowns and risk, and how many focused agent sessions it would realistically take.
 - **L or larger (L, XL): an epic.** One task per story or fix, and no validation task: the epic audit checks the requirements.
-- **Smaller than L (XS, S, M): a single task.** One story, or one fix when it is a bug, with its acceptance criteria in its own description and no sub-issues.
+- **Smaller than L (XS, S, M): a single task.** One task in the task format, a Fix when it is a bug, with its done criteria in its own description and no sub-issues.
 
 ### Splitting into tasks
 
@@ -233,7 +208,7 @@ Each task is built in one fresh, unattended agent session, so it must be small e
 - Split by feature boundary, never by development phase: "Sign-in" is one story, not scaffolding, logic, tests and polish as four.
 - The tests, error handling, hardening and documentation of new code belong in the task that adds the code, never in a task of their own.
 - Order the tasks so earlier ones enable later ones, and block a task only on the tasks it really depends on.
-- Every task is in scope for the epic, and every requirement is owned by at least one task.
+- Every task is in scope for the epic, and every requirement is built by at least one task.
 - A step only a person can do (credentials, DNS, third-party consoles, a migration run by operations, a design sign-off) is its own manual task, never a criterion on an agent's task.
 
 ### Epic audit
@@ -268,14 +243,19 @@ the task names: Omniralph uses them in plans, prompts and commit messages
 
 ```
 US-001 — Add priority field to database
-Kind: Story · Covers: FR-1 · Priority: High · Blocked by: — · Manual: no
+Kind: Story · Priority: High · Blocked by: — · Manual: no
 
-As a developer, I want to store task priority in the database so that it
-persists across sessions.
+I want you to store a priority on every task, so that it persists across
+sessions and the task list can show and filter by it.
 
-Acceptance criteria:
-- [ ] ...
+Build it by ...
+
+Don't stop until:
+- ...
 ```
+
+Show all three paragraphs of every task: the user reviews how it will be
+built as well as what it delivers and when it is done.
 
 **Sub-issue title:** the plain task title. No `US-001:` prefix.
 
@@ -315,11 +295,13 @@ each mode file), the target structure is one of:
   repo tag, if the user asked for one).
 - One sub-issue per task, created **in task order**, each with:
   - `parentId` = the epic, `title` = the plain task title, `description` =
-    the task in the story or fix format;
+    the task's three paragraphs;
   - `priority` (1 Urgent, 2 High, 3 Medium, 4 Low), always set;
   - `blockedBy` = the tasks (and any work items outside the epic) it depends
     on, as the dependency rules allow;
-  - the **manual** label (`addLabels`) for steps for a person.
+  - the **manual** label (`addLabels`) for steps for a person, and the bug
+    label (the team's `Bug` label, unless `LINEAR.md` names
+    another) for a fix.
 - No validation sub-issue: Omniralph audits the epic against its
   requirements before its pull request opens.
 - If the epic as a whole waits on other work, make the **epic** `blockedBy`
@@ -333,12 +315,12 @@ After creating them:
 
 **Single task (smaller than L):**
 
-- One issue whose description is a story, or a fix for a bug, with no
-  `Covers:` line, plus the branch line. No sub-issues.
+- One issue whose description is the task's three paragraphs, plus the branch
+  line. No sub-issues. A fix gets the bug label.
 - Omniralph builds the whole description as one task, and would split it into
   sub-issues if it looked like an epic. So in a single task: no requirement
-  list, no task-style headings such as `### US-001: …`, and
-  `## Acceptance Criteria` is the last section.
+  list, no headings (no task-style `### US-001: …` ones either), no
+  `Covers:` line and no checklist section.
 - Set `blockedBy` for any work item it waits on, as for an epic.
 
 Whenever removing a task in Linear, **cancel** it (do not delete).
@@ -410,39 +392,27 @@ One of its stories, titled `Show priority on task cards`, priority High,
 blocked by the story that stores the priority:
 
 ```markdown
-As a user, I want to see each task's priority at a glance so that I know what needs attention first.
+I want you to show each task's priority on its card, so that people with a long task list see what needs attention first without opening a task.
 
-Covers: FR-2
+Build it by reusing the badge component in `src/components/badge.tsx` with its color variants on the task cards in `src/tasks/card.tsx`.
 
-The badge component is `src/components/badge.tsx`; task cards are in `src/tasks/card.tsx`.
-
-## Acceptance Criteria
-
-- [ ] Each task card shows a priority badge: red for high, yellow for medium, gray for low
-- [ ] The badge is visible without hovering or clicking
-- [ ] A task without a stored priority shows the medium badge
+Don't stop until:
+- Each task card shows a priority badge: red for high, yellow for medium, gray for low
+- The badge is visible without hovering or clicking
+- A task without a stored priority shows the medium badge
 ```
 
-A fix filed in the same epic, titled `Sort priorities by rank, not by name`:
+A fix filed in the same epic with the bug label, titled `Sort priorities by rank, not by name`:
 
 ```markdown
-## Current behavior
+I want you to fix sorting by priority, which puts low before medium today: it should order tasks high, then medium, then low, within each status column.
 
-Sorting the task list by priority puts low before medium: the sort compares the priority names alphabetically.
+Build it by looking at the task list's sort, which likely compares the priority names alphabetically instead of by rank.
 
-## Expected behavior
-
-Sorting by priority orders tasks high, then medium, then low, within each status column.
-
-## Unchanged behavior
-
-Sorting by due date and by title orders tasks as it does today, and the sort choice stays in the URL.
-
-## Acceptance Criteria
-
-- [ ] With one task of each priority, sorting by priority lists them high, medium, low
-- [ ] Sorting by due date and by title gives the same order as before
-- [ ] Reloading the page keeps the chosen sort
+Don't stop until:
+- With one task of each priority, sorting by priority lists them high, medium, low
+- Sorting by due date and by title gives the same order as before
+- Reloading the page keeps the chosen sort
 ```
 
 There is no validation task: Omniralph audits FR-1 to FR-4 before the epic's

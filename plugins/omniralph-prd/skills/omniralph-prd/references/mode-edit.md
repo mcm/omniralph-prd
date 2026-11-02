@@ -26,8 +26,12 @@ issue and all of its sub-issues.
   session. If it does, Omniralph may be working a task right now.
 - Look for an older format: a description with Introduction, Goals or
   Non-Goals sections, lists of metrics or of commands to run, stories as
-  `### US-001: …` headings, `US-001:` title prefixes, and
-  `## Ralph Metadata` sections (Story ID, Ralph Priority, Dependencies).
+  `### US-001: …` headings, `US-001:` title prefixes,
+  `## Ralph Metadata` sections (Story ID, Ralph Priority, Dependencies), and
+  tasks written as a story sentence ("As a … I want …") with a `Covers:`
+  line and an `## Acceptance Criteria` checklist, or as
+  `## Current behavior` / `## Expected behavior` /
+  `## Unchanged behavior` sections.
 
 Then summarize for the user:
 
@@ -93,6 +97,12 @@ under `## Scope`, design and technical considerations become `## Design` and
 `## Requirements`. Drop lists of commands to run and of metrics: the repo
 decides the checks, and outcomes belong in planning documents.
 
+When rewriting a task in an older format, map it onto the task format: the
+story sentence (or the current and expected behavior of a fix) becomes the
+"I want you to" paragraph, its notes on how to build it the "Build it by"
+paragraph, and its acceptance criteria (with the unchanged behavior of a fix)
+the "Don't stop until" paragraph. Drop its `Covers:` line.
+
 ## Step 3: Write the revised work item
 
 After incorporating the user's answers, write the revised epic or task in the
@@ -110,9 +120,9 @@ end of an epic, before the branch line:
 - Any sub-issues closed, reopened, added, or whose dependencies shifted
 ```
 
-Refer to tasks in the Change Log by Linear identifier. In a single
-task, place the Change Log before `## Acceptance Criteria`, which must stay
-last.
+Refer to tasks in the Change Log by Linear identifier. A single task
+has no Change Log section: it stays three paragraphs, so give the user the
+change summary in the conversation instead.
 
 ## Step 4: Re-size the work
 
@@ -146,9 +156,8 @@ Guidelines:
 - Existing tasks are named by their Linear identifier, which never
   changes: Omniralph's commits and progress log reference it. Label new tasks
   `new-1`, `new-2`, … until they are created.
-- Each kept, edited or new task follows the story or fix format, with its
-  `Covers:` line, a priority, blocks relations, and the manual label where it
-  applies.
+- Each edited or new task follows the task format, with a priority, blocks
+  relations, and the manual label or the bug label where it applies.
 - **Older markup** (if the user chose to rewrite): remove `## Ralph Metadata`
   sections and `US-001:` title prefixes from pending tasks only. Omniralph
   uses a legacy `Ralph Priority` when a sub-issue has no Linear
@@ -162,14 +171,14 @@ Guidelines:
 ## Step 6: Update the requirements
 
 Update the numbered requirements. Keep the numbers of unchanged requirements;
-append new ones at the end rather than renumbering, so `Covers:` lines and
-other references stay valid.
+append new ones at the end rather than renumbering, so references to them
+stay valid.
 
 - "FR-2: WHEN a user clicks X, the system must..." (edited: was about Y)
 - "FR-7: [new requirement]"
 
 If a requirement is being removed, mark it removed rather than deleting the
-number, and take it out of every `Covers:` line:
+number:
 
 - "FR-3: ~~[original text]~~ (removed in this revision)"
 
@@ -205,7 +214,8 @@ they confirm, use the Linear MCP tools:
 
 **If the issue stays (or becomes) a single task, smaller than L:**
 
-- Keep its acceptance criteria in the story or fix format, last.
+- Keep it in the task format: its done criteria in the "Don't stop until"
+  paragraph, last.
 - Do not create new sub-issues. If the user confirmed collapsing an existing
   epic, fold the remaining sub-issues' content into the description and cancel
   (do not delete) those sub-issues, but never collapse a sub-issue that is
@@ -225,11 +235,16 @@ without explicit user confirmation in this session.
       (an epic only if L or larger)
 - [ ] The epic has `## Problem`, `## Scope` (`### In` / `### Out`) and
       `## Requirements`, and nothing else besides the optional design and
-      technical notes; a single task is a story, or a fix for a bug
+      technical notes
+- [ ] Every task, a single one or an epic's, is three paragraphs ("I want you
+      to …", "Build it by …", "Don't stop until …") and nothing else: no
+      `Covers:` line, story sentence, behavior sections or checklist heading
+- [ ] Every constraint that must hold is in the "Don't stop until" paragraph,
+      not in "Build it by"
+- [ ] A fix has the bug label; a story doesn't
 - [ ] Requirements are numbered `FR-n` bullets, one behavior each, with WHEN
       or IF only for conditional behavior
-- [ ] Every requirement is owned by at least one task's `Covers:` line, and
-      every `Covers:` entry is one of the epic's requirements
+- [ ] Every requirement is built by at least one task
 - [ ] Tasks split by feature, not by phase, each small enough for one session
 - [ ] Full scope stated up front; nothing labelled future/stretch/v2 unless the
       user did, and genuinely optional items were put to the user

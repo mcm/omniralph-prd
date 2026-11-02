@@ -182,7 +182,7 @@ Write the epic in the epic format, with:
 
 ## Step 5: Tasks
 
-In task order, each in the story format with its `Covers:` line:
+In task order, each in the task format:
 
 1. **Setup** (only what Step 1 found missing): commit the design context,
    build the screenshot loop.
@@ -194,7 +194,7 @@ In task order, each in the story format with its `Covers:` line:
    criterion points to a finding and is evidence an agent can check: a lint
    rule, the contrast script, a command's output, or a named screenshot
    inspected.
-4. **The review task**, last, blocked by every other sub-issue. It covers
+4. **The review task**, last, blocked by every other sub-issue. It checks
    every requirement. Title:
    `Validate the UI/UX bar and functional requirements`. Body: the template
    below.
@@ -205,23 +205,17 @@ Fill in the `<…>` placeholders. Keep the rest verbatim: the anchoring rules
 are what make the score track progress rather than reviewer variance.
 
 ```markdown
-As the project owner, I want each round of UI/UX work reviewed against the last one, so that the loop files the next round of fixes and ends once the bar is cleared.
+I want you to review this round of UI/UX work against the last one, for the project owner, so that the loop files the next round of fixes and ends once the bar is cleared. This task reviews; it doesn't fix: everything it finds is reported as follow-ups.
 
-Covers: FR-1, …, FR-n
-
-This task reviews; it doesn't fix. Everything it finds is reported as follow-ups.
-
-## Each round
+Build it by running each round in these steps:
 
 1. **Checks.** Run the repo's checks, the screenshot command and `impeccable detect` on <target> (and on each consumer listed in the epic). Record the output.
-2. **Requirements.** Verify FR-1 … FR-n and every completed task's acceptance criteria, with evidence (command output or screenshot path).
+2. **Requirements.** Verify FR-1 … FR-n and every completed task's done criteria, with evidence (command output or screenshot path).
 3. **Critique.** Run `/impeccable critique <target>` at <viewports> in <themes>, anchored to the previous review as below. <Lean mode only: if `.impeccable/critique/` holds no `*__<slug>.md` yet, this is the baseline round: run a normal, unanchored critique.>
 4. **Keep the report.** Leave it in the worktree under `.impeccable/critique/`. Omniralph commits it with the round (as `wip(…)` when the round reports blocked, which needs the repo's checks to pass), and the next round anchors to it.
 5. **Post one comment** on this issue: `Round N: PASS|FAIL`, the score and its trend across rounds, P0/P1/P2 counts, the checks table, the requirements table, and the follow-ups filed.
 
-## Anchoring the critique
-
-This overrides the critique skill's default, which shows Assessment A no earlier runs.
+**Anchoring the critique.** This overrides the critique skill's default, which shows Assessment A no earlier runs.
 
 1. **Find the previous review.** It is the newest `.impeccable/critique/*__<slug>.md`. Find the commit that added it with `git log -1 --format=%H -- <file>`. The code changed since then is `git diff --stat <commit> -- <target> <other paths>`.
 2. **Give Assessment A the previous review and that diff.** Assessment B stays isolated. A must:
@@ -232,24 +226,24 @@ This overrides the critique skill's default, which shows Assessment A no earlier
 
 Detector findings checked and judged false positives go in `.impeccable/critique/ignore.md` with the reason, so later rounds don't re-litigate them.
 
-## What to report
+**What to report.**
 
 * **The bar is cleared** (score ≥ <N>/40, zero <blocking severities>, every check and requirement holds): report **complete** with no follow-ups. List any remaining lower-severity notes in the comment only; the loop is done.
 * **Otherwise** report **blocked**, with follow-ups for every <filed severities> finding and every failing requirement or check.
 * **Every round**, report the score as `metric`: name `critique score`, the value, direction `higher` and target <N>. Keep the name and direction the same every round: the loop is set aside when the best score stops improving.
-  * Group findings into at most 8 follow-ups, each one session of work, layer by layer. Each states its finding, the evidence and checkable acceptance criteria.
+  * Group findings into at most 8 follow-ups, each one session of work, layer by layer. Each states its finding, the evidence and checkable done criteria.
   * Reuse an open sub-issue that already covers a finding rather than filing a duplicate.
   * Anything under the epic's `### Out` is a P3 note, never a follow-up.
   * A follow-up for a person (e.g. a commit in another repo) is marked manual. File it only if this task can't pass without it.
 
-## Acceptance Criteria
-
-- [ ] The round's critique, anchored as above (or the baseline in round one), is saved under `.impeccable/critique/`
-- [ ] The critique scores ≥ <N>/40 with zero <blocking severities> findings
-- [ ] FR-1: …
-- [ ] Every acceptance criterion of the epic's completed tasks still holds
-- [ ] `impeccable detect` exits 0 on <target> (and listed consumers)
-- [ ] The repo's checks pass
+Don't stop until:
+- The round's critique, anchored to the previous review (or the baseline in round one), is saved under `.impeccable/critique/`
+- The critique scores ≥ <N>/40 with zero <blocking severities> findings
+- FR-1: …
+- Every done criterion of the epic's completed tasks still holds
+- `impeccable detect` exits 0 on <target> (and listed consumers)
+- The repo's checks pass
+- No file outside `.impeccable/critique/` changes: this task reviews, it doesn't fix
 ```
 
 ## Final step: save to Linear
