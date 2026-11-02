@@ -1,28 +1,30 @@
-# Shared PRD methodology
+<!-- Generated from the omniralph repo (packages/planning/src/plugin, built by scripts/build-prd-plugin.ts). Do not edit by hand: change it in the omniralph repo, and CI publishes it here. -->
 
-Every mode (`new`, `triage`, `edit`) produces the same core artifacts using the
-formats below. The mode files describe the step sequence; this file is the
-reference for *what the artifacts look like* and *how they are written to
+# Shared planning methodology
+
+Every mode (`new`, `triage`, `edit`, `ui-loop`) writes the same work items,
+by the planning rules below. The mode files describe the steps; this file is
+the reference for *what the work items look like* and *how they are written to
 Linear*.
 
-The PRDs are executed by **omniralph**, whose ralph loop runs an epic delegated
-to the Omniralph Linear agent:
-it takes the next ready sub-issue, hands it to a fresh, unattended Claude
-session, runs the quality gates, commits, marks the sub-issue Done, and moves on.
-When every story is done it opens the pull/merge request, then fixes failed CI
-and Omniralph's own review findings on that PR. omniralph reads stories from
-**Linear's own fields** — the issue identifier, title, priority, sub-issue
-order, workflow state, labels and "blocks" relations — plus the checkboxes in
-each description. It does not parse story IDs or metadata in titles or bodies,
-so don't write any.
+What you write is built by **Omniralph**. For an epic delegated to the
+Omniralph Linear agent, it takes the next ready task, hands it to a
+fresh, unattended Claude session, runs the repo's checks, commits, marks the
+task Done and moves on. When every task is done it opens the pull request,
+then fixes failed CI and its own review findings on it. Omniralph shows the
+agent the epic's description as background and the task's own description as
+the work. It reads tasks from **Linear's own fields** (identifier,
+title, priority, sub-issue order, workflow state, labels and "blocks"
+relations) plus the checkboxes in each description, never from identifiers or
+metadata written into titles or bodies, so don't write any.
 
 ---
 
 ## Clarifying questions
 
-Before writing (or revising) a PRD, ask 3–5 essential clarifying questions,
-targeted at the genuine ambiguities. Don't re-ask anything the user's context or
-an existing issue already answers — confirm your understanding instead.
+Before writing (or revising) a plan, ask 3–5 essential clarifying questions,
+targeted at the genuine ambiguities. Don't re-ask anything the user's context
+or an existing issue already answers: confirm your understanding instead.
 
 ### Use lettered options
 
@@ -56,224 +58,225 @@ After each response, decide whether to:
 
 - Ask follow-up questions (if answers reveal complexity),
 - Ask about a new aspect (if the current area is clear), or
-- Generate the PRD (if you have enough context).
+- Write the plan (if you have enough context).
 
-Typically 2–4 rounds are needed — fewer for small, well-specified work.
+Typically 2–4 rounds are needed, fewer for small, well-specified work.
+
+### Story or fix
+
+Settle early whether the work is new work (a story) or a bug (a fix). For a
+bug, ask what happens now, what should happen instead, and what nearby
+behavior must not change, unless the issue already says.
 
 ### Full scope up front
 
-Everything in the PRD is in scope for its goal, and the whole epic gets built.
+Everything in the plan is in scope for its epic, and the whole epic gets built.
 
-- When you present a PRD, state its full scope. Don't silently trim or defer
-  anything the goal needs.
-- Don't label stories, requirements or criteria "future enhancement",
-  "stretch", "v2", "nice to have" or similar unless the user marked them that
-  way.
+- When you present a plan, state its full scope. Don't silently trim or defer
+  anything the epic needs.
+- Don't label tasks, requirements or criteria "future enhancement", "stretch",
+  "v2", "nice to have" or similar unless the user marked them that way.
 - If something is genuinely optional, name it and ask the user whether it's in
-  or out (a lettered question works). If it's in, it's a normal story or
-  requirement. If it's out, it goes under Non-Goals.
+  or out (a lettered question works). If it's in, it's a normal task or
+  requirement. If it's out, it goes under `### Out`.
 
 ### Prerequisites and manual steps
 
 Ask about anything the work depends on that an AI agent working in the repo
 cannot do itself, unless the context already answers it:
 
-- **Other Linear issues** that must land first (another epic, a backend change,
-  a design task). These become "blocks" relations **on the epic itself**, never
-  on its stories (see "Stories may only be blocked by stories in the same
-  epic").
+- **Other Linear issues** that must land first (another epic, a backend
+  change, a design task). These become "blocks" relations, as the dependency
+  rules allow.
 - **Steps for a person**: provisioning secrets or credentials, DNS, third-party
-  console or app-store setup, data migrations run by ops, design sign-off.
-  These become separate **manual** sub-issues, never acceptance criteria on an
-  agent story.
+  console or app-store setup, data migrations run by operations, design
+  sign-off. These become separate **manual** tasks, never acceptance criteria
+  on an agent's task.
 
-### Quality gates
+### The repo's checks
 
-The quality gates are the commands omniralph's agent runs before claiming a story
-complete, and that omniralph itself runs after the story to verify it (with the
-repository's **Run the PRD's quality gates** setting, on by default; the
-repository's own verify commands run first). The PR's CI runs only once, when
-the finished epic's PR opens, so **gates weaker than CI let every story pass
-and then fail at the end.** Make the gates match what CI enforces.
-
-Using the source access you established (SKILL.md → "Accessing the target
-project's source"), discover them yourself, in this order:
-
-1. **CI config first**: `.github/workflows/*.yml`, `.gitlab-ci.yml`, or
-   equivalent. Take the commands the PR pipeline runs (lint, typecheck, test,
-   build).
-2. **Then the scripts those commands call**: `package.json` scripts, `Makefile`,
-   `pyproject.toml`, and similar. Prefer an aggregate script (e.g.
-   `npm run check`) when CI uses one.
-
-This works the same whether you read those files from a local checkout or fetch
-them through a git host connector (GitHub, GitLab, Bitbucket, etc.). If you can
-determine them, document them without asking. If you have no source access,
-ask:
-
-```
-What quality commands must pass for each user story?
-   A. pnpm typecheck && pnpm lint
-   B. npm run typecheck && npm run lint
-   C. bun run typecheck && bun run lint
-   D. Other: [specify your commands]
-
-For UI stories, should the agent verify in a browser?
-   A. Yes — the harness host has a browser tool (e.g. Playwright MCP); name it
-   B. No, automated tests are sufficient
-```
-
-Don't assume browser verification is available: omniralph runs stories
-unattended, so only ask for it if the user confirms the harness host has a
-browser tool.
-
-Every gate command must be non-interactive (no watch mode, no prompts) and
-runnable from the repository root in a fresh checkout.
+Omniralph runs the repo's own checks after every task, so a plan never lists
+commands to run. Don't ask the user for them and don't write them into any
+description. A task may still name a command whose output is the evidence for
+one of its criteria.
 
 ---
 
-## PRD format
+## Planning rules
 
-Generate the PRD with these sections. This becomes the description of the epic
-(or the single issue) in Linear, and omniralph includes the epic's full
-description in every story's prompt. The numbers below are for this reference
-only — write each heading as a plain `##` heading (`## Goals`, not
-`## 2. Goals`).
+These rules are the same ones Omniralph's own triage follows.
 
-### 1. Introduction/Overview
-Brief description of the feature and the problem it solves.
+### Work items
 
-### 2. Goals
-Specific, measurable objectives (bullet list).
+Every work item has a kind and a role.
+- **Kind.** A **Story** is new work or an enhancement. A **Fix** is a bug: something that should work and doesn't. Omniralph tells a Fix by its bug label or its fix format; everything else is a Story.
+- **Role.** A **task** is one piece of work an agent finishes in one session; it has no sub-issues. An **epic** is a set of tasks (its sub-issues) that ship together in one pull request, once every task is done. A **feature** groups epics; nobody builds a feature directly. A task with no epic is a **standalone task**, and counts as an epic of one.
+- What an agent builds against is the task and its epic, never a planning document. Outcomes and success measures belong in planning documents, not in epics or tasks.
 
-### 3. Quality Gates
-**CRITICAL.** omniralph finds the gates by exact format, so follow it exactly:
+### Epic format
 
-- The heading is literally `## Quality Gates`.
-- Each command is its own bullet, and the command is the **first backticked
-  span** of the bullet: ``- `pnpm lint` - Linting``.
-- Anything that is not a shell command must **not** start with backticks — a
-  bullet like ``- `dev-browser` skill`` would be run as a command. Write
-  instructions as plain prose bullets instead.
+An epic's description has these sections, in this order, each as a plain `##` heading. Leave out `## Design` and `## Technical notes` when there is nothing to say; the others are always present.
+- `## Problem`: who has the problem, what it is today and why it matters now.
+- `## Scope`: what the epic delivers under `### In` and what it deliberately leaves out under `### Out`. Only what is really out of scope goes under Out: never relabel requested work as later or optional; if part of it truly is optional, ask a person.
+- `## Design` (optional): UI and UX decisions, flows, components to reuse.
+- `## Technical notes` (optional): constraints, integration points, real file paths, patterns to follow.
+- `## Requirements`: the numbered requirements (see Requirement wording). Every requirement is owned by at least one story.
 
+Nothing else: no title heading (the title is its own field), no checklist, no other sections. The repo decides which checks run on every task, so an epic never lists commands to run.
+
+```markdown
+## Problem
+
+[Who has the problem, what it is today and why it matters now.]
+
+## Scope
+
+### In
+
+- [What this epic delivers]
+
+### Out
+
+- [What it deliberately leaves out]
+
+## Design
+
+[Optional: UI and UX decisions, flows, components to reuse.]
+
+## Technical notes
+
+[Optional: constraints, integration points, file paths, patterns to follow.]
+
+## Requirements
+
+- FR-1: The system must [behavior].
+- FR-2: WHEN [event or state], the system must [behavior].
+- FR-3: IF [unwanted condition], the system must [behavior].
 ```
-## Quality Gates
 
-These commands must pass for every user story:
-- `pnpm typecheck` - Type checking
-- `pnpm lint` - Linting
-- `pnpm test` - Unit tests
+### Story format
 
-For UI stories, also:
-- Verify the change in a browser using the Playwright MCP
+A story is a task for new work. Its description is exactly this shape:
+- One sentence: "As a [user], I want [capability] so that [benefit]."
+- A `Covers:` line naming the requirements of its epic the story owns, by identifier (`Covers: FR-2, FR-4`). A standalone story has no epic, and no `Covers:` line.
+- Optionally, short context: files to touch, patterns to follow.
+- `## Acceptance Criteria` (exactly that, no trailing colon), a `- [ ]` checklist, as the last section.
+
+Don't repeat the title as a heading, and don't add identifiers, priority, dependency or metadata lines: those are Linear fields. Never refer to another story by a drafting label such as US-001.
+
+```markdown
+As a [user], I want [capability] so that [benefit].
+
+Covers: FR-1, FR-3
+
+[Optional context: files to touch, patterns to follow.]
+
+## Acceptance Criteria
+
+- [ ] [Evidence to check]
+- [ ] [More evidence to check]
 ```
 
-### 4. Non-Goals (Out of Scope)
-What this feature will NOT include. Critical for managing scope. Only list
-what the user agreed is out: this section is not a place to park work the goal
-needs.
+### Fix format
 
-### 5. Design Considerations (Optional)
-UI/UX requirements, links to mockups if available, relevant existing components
-to reuse. Images and files attached in Linear are downloaded and shown to the
-agent: attach anything every story needs to the epic, and anything only one
-story needs to that story's sub-issue.
+A fix is a task for a bug. Its description has these sections, in this order, each always present:
+- `## Current behavior`: what happens now, with the steps, input or state that show it.
+- `## Expected behavior`: what must happen instead.
+- `## Unchanged behavior`: the nearby behavior the fix must keep exactly as it is, so the fix doesn't break it.
+- `## Acceptance Criteria`: a `- [ ]` checklist, as the last section.
 
-### 6. Technical Considerations (Optional)
-Known constraints or dependencies, integration points with existing systems,
-performance requirements.
+A fix in an epic may add a `Covers:` line before `## Current behavior` when it owns requirements of the epic.
 
-### 7. Success Metrics
-How you will know the feature succeeded (bullet list). Specific and measurable.
+```markdown
+## Current behavior
 
-### Routing and branch lines
+[What happens now, with the steps or input that show it.]
 
-Omniralph routes an issue to a repository by its **team, project or label**,
-configured per repository in Omniralph. Expect that routing to be in place, and
-put the issue in the team or project (or give it the label) that routes it.
+## Expected behavior
 
-- **Repository tag (only when asked).** Don't add a `[repo=…]` tag unless the
-  user asks for one. A tag overrides the routing: an issue tagged with a
-  repository that doesn't have ralph enabled isn't routed at all. When asked,
-  add `[repo=<full path>]` on its own line, with the repository's full path
-  (`acme/app`, `group/subgroup/project`). One repository per tag, and no
-  branch in it.
-- **Branch (optional).** If the user wants a specific branch name, add
-  `` > Branch: `name` ``. Otherwise omniralph uses Linear's branch name for the
-  issue.
+[What must happen instead.]
+
+## Unchanged behavior
+
+[Nearby behavior the fix must keep exactly as it is.]
+
+## Acceptance Criteria
+
+- [ ] [Evidence to check]
+- [ ] [More evidence to check]
+```
+
+### Requirement wording
+
+Requirements are a bullet list, numbered from 1: `- FR-1: The system must …`. Never headings.
+- One behavior per requirement, explicit and unambiguous, stated as what the system must do.
+- Add a condition only to conditional behavior: WHEN for an event or state (`- FR-2: WHEN a run fails, the system must …`), IF for an unwanted condition (`- FR-3: IF the token has expired, the system must …`). Behavior that always holds has no condition.
+- Stories name the requirements they own by identifier in their `Covers:` line, so keep identifiers stable once stories refer to them.
+
+### Checkable criteria
+
+Acceptance criteria are evidence to check, not tests to write. Each one names something an agent can confirm inside the repo, in the code, the output of a command or the behavior of the running software: "Deleting a project asks for confirmation first", not "Works correctly".
+- Tests are written where the repo's conventions call for them on new behavior, never to prove a criterion. Don't phrase a criterion as a test to add.
+- A fix adds a regression test only where the affected code already has tests.
+- No outcomes or metrics: nothing measured after merge, such as adoption, a percentage improvement, fewer support requests or user satisfaction. Those belong in planning documents.
+- Nothing that needs human judgement, production access or an outside account.
+
+### Sizing
+
+Size the whole body of work, not one piece of it: XS, S, M, L or XL. Weigh the number of distinct requirements, the surface it touches (database, API, UI, integrations, infrastructure), the unknowns and risk, and how many focused agent sessions it would realistically take.
+- **L or larger (L, XL): an epic.** One task per story or fix, then the validation audit as the last task.
+- **Smaller than L (XS, S, M): a single task.** One story, or one fix when it is a bug, with its acceptance criteria in its own description and no sub-issues.
+
+### Splitting into tasks
+
+Each task is built in one fresh, unattended agent session, so it must be small enough to finish in one.
+- Split by feature boundary, never by development phase: "Sign-in" is one story, not scaffolding, logic, tests and polish as four.
+- The tests, error handling, hardening and documentation of new code belong in the task that adds the code, never in a task of their own.
+- Order the tasks so earlier ones enable later ones, and block a task only on the tasks it really depends on.
+- Every task is in scope for the epic, and every requirement is owned by at least one task.
+- A step only a person can do (credentials, DNS, third-party consoles, a migration run by operations, a design sign-off) is its own manual task, never a criterion on an agent's task.
+
+### Validation audit
+
+Every epic ends with a validation audit: its last task, titled `Validate functional requirements`, blocked by every other task in the epic. It has one criterion per requirement of the epic, copied as the epic words it, and this body:
+
+```markdown
+Audit the finished epic against its requirements. For each requirement below, find the evidence that it holds on the epic's branch: the code that implements it, and the tests the repo's conventions call for on that behavior. Check every story's acceptance criteria the same way. Fix each gap you find, as part of this task.
+
+## Acceptance Criteria
+
+- [ ] FR-1: [the requirement, as the epic words it]
+- [ ] Every acceptance criterion of the other tasks in this epic holds
+- [ ] The repo's checks pass
+```
+
+### Dependency rules
+
+A "blocks" relation is the only thing that stops work from starting early, and Omniralph ships an epic only once every task in it is done. So:
+- A task in an epic may be blocked only by another epic, a standalone task, or a task in its own epic.
+- An epic may be blocked only by another epic or a standalone task.
+- A standalone task counts as an epic of one.
+- Nothing is blocked by a feature: block on the epic inside it the work waits for.
+- When work waits for a task in another epic, block it on that task's epic instead.
+- A task is never blocked by its own epic, and an epic never by one of its own tasks.
+- Work found while building an epic that can't land until the epic ships becomes a standalone task blocked by the epic, never a blocker of the task that found it.
 
 ---
 
-## T-shirt sizing and the decomposition rule
+## Drafting tasks with the user
 
-After drafting the PRD, estimate the size of the **entire** body of work — the
-total effort to deliver every goal and functional requirement, not any single
-piece. Weigh the number of distinct functional requirements, the breadth of
-surface area touched (database, API, UI, integrations, infra), unknowns and
-risk, and roughly how many focused AI-agent sessions the work would realistically
-take.
-
-The scale, smallest to largest:
-
-- **XS** — Extra Small
-- **S** — Small
-- **M** — Medium
-- **L** — Large
-- **XL** — Extra Large
-
-State the size you chose with a one-to-two-sentence rationale, then apply the
-rule:
-
-- **L or larger (L, XL) → decompose into an epic with sub-issues.** Continue to
-  the User Stories step and create a parent issue with one sub-issue per user
-  story, plus a final functional-requirements validation sub-issue.
-- **Smaller than L (XS, S, M) → do NOT decompose.** Skip the User Stories step
-  entirely and capture everything in a single self-contained issue, with
-  acceptance criteria included directly in its description.
-
-Tell the user the size and the resulting structure before continuing.
-
----
-
-## User stories (only when L or larger)
-
-> Perform this step only if the size is **L or larger**. If smaller, skip
-> straight to Functional Requirements — the work ships as a single issue with no
-> sub-issues, and its acceptance criteria belong directly in that issue's
-> description.
-
-Decompose the work into user stories. Each story becomes one sub-issue and is
-implemented in one fresh, unattended AI-agent session, so it must be small
-enough to finish in one session. Each needs a title, a description ("As a
-[user], I want [feature] so that [benefit]"), and a verifiable
-acceptance-criteria checklist.
-
-**Split by feature, not by phase.** Each story is a slice of the feature that
-works end to end: "Auth system" is one story, not four stories for scaffolding,
-logic, tests and polish. If a feature is too big for one session, split it
-into smaller features (e.g. "Sign up with email", "Password reset"), each one
-complete on its own.
-
-- A story's tests, error handling and basic hardening (input validation,
-  auth checks, safe failure) belong in the story that introduces the code.
-  Write them as acceptance criteria there, never as a separate story.
-- A story never leaves stubs, placeholders or TODOs for anything in its own
-  acceptance criteria, and never relies on a later story to finish its code.
-  If part of the work can't be finished in the story, it's a different
-  feature: make it its own story, wired with a blocks relation.
-
-**Drafting labels.** While drafting with the user, refer to stories as US-001,
+**Drafting labels.** While drafting with the user, refer to tasks as US-001,
 US-002, … so dependencies are easy to discuss. These labels are for the
-conversation only: they never go into Linear titles or bodies. Once the
-sub-issues exist, their Linear identifiers (e.g. `ENG-12`) are the story names —
-omniralph uses them in plans, prompts and commit messages
+conversation only: they never go into Linear titles or bodies. Once
+the sub-issues exist, their Linear identifiers (e.g. `ENG-12`) are
+the task names: Omniralph uses them in plans, prompts and commit messages
 (`feat(ENG-12): Add priority field to database`).
 
-**Present each story as:**
+**Present each task as:**
 
 ```
 US-001 — Add priority field to database
-Priority: High · Blocked by: — · Manual: no
+Kind: Story · Covers: FR-1 · Priority: High · Blocked by: — · Manual: no
 
 As a developer, I want to store task priority in the database so that it
 persists across sessions.
@@ -282,271 +285,172 @@ Acceptance criteria:
 - [ ] ...
 ```
 
-**Sub-issue title:** the plain story title. No `US-001:` prefix.
+**Sub-issue title:** the plain task title. No `US-001:` prefix.
 
-**Sub-issue description** — exactly this shape, nothing else:
-
-```markdown
-As a [user], I want [feature] so that [benefit].
-
-[Optional extra context: files to touch, patterns to follow.]
-
-## Acceptance Criteria
-
-- [ ] Specific verifiable criterion
-- [ ] Another criterion
-```
-
-- Don't repeat the title as a heading, and don't add a `## Ralph Metadata`
-  section, Story ID, priority or dependency lines. Priority, order and
-  dependencies are set as Linear fields.
-- The heading is exactly `## Acceptance Criteria` — no trailing colon, or
-  omniralph won't recognize the section.
-
-**Order, priority and dependencies.** omniralph picks the next story that has no
-open blockers: in-progress stories first, then by **Linear priority** (Urgent
+**Order and priority.** Omniralph picks the next task that has no open
+blockers: in-progress tasks first, then by **Linear priority** (Urgent
 first, *No priority* last), then by the sub-issues' order in the parent.
 
-- Use **blocks relations** for every real dependency. They are the only thing
-  that stops a story from running early, and they alone must make the epic
-  run correctly. If a story would break when run before another, that's a
-  missing blocks relation — add it.
-- **Stories may only be blocked by stories in the same epic.** A story's
-  `blockedBy` list must contain sub-issues of its own epic and nothing else —
-  never an issue outside the epic (another epic, a story in another epic, a
-  standalone issue, a backend or design task). This is a hard rule with no
-  exceptions. If any story is functionally blocked by an outside issue, set
-  that issue on the **epic's** `blockedBy` instead, even if only one story
-  needs it; omniralph then waits for it before starting any story. Manual
-  steps for a person are sub-issues of the epic, so stories may depend on
-  them.
-- Give every story a priority. Use one priority for the whole epic unless some
-  stories genuinely matter more.
-- Sub-issue order in the parent is cosmetic: it only breaks ties between
-  stories that are equally ready, which by definition can run in either order.
-  Create sub-issues in story order, but never check, report or ask about where
-  they ended up in the parent — don't tell the user to drag or reorder them,
-  and don't remark that one landed out of place.
+- Blocks relations alone must make the epic run correctly. If a task would
+  break when run before another, that's a missing blocks relation: add it.
+- Give every task a priority. Use one priority for the whole epic unless some
+  tasks genuinely matter more.
+- Sub-issue order in the parent is cosmetic: it only breaks ties between tasks
+  that are equally ready, which by definition can run in either order. Create
+  sub-issues in task order, but never check, report or ask about where they
+  ended up in the parent: don't tell the user to drag or reorder them, and
+  don't remark that one landed out of place.
 
-**Manual stories.** A step for a person (see "Prerequisites and manual steps")
-is its own sub-issue with the **manual** label (or the label `LINEAR.md`
-names), wired with blocks relations like any other story. omniralph never works
-it; stories that depend on it wait until a person moves it to Done.
+**Manual tasks.** A step for a person is its own sub-issue with the **manual**
+label (or the label `LINEAR.md` names), wired with blocks relations
+like any other task. Omniralph never works it; tasks that depend on it wait
+until a person moves it to Done.
 
-**Guidelines:**
-
-- Acceptance criteria must be verifiable, not vague. "Works correctly" is bad;
-  "Button shows confirmation dialog before deleting" is good.
-- The agent must be able to check every criterion itself, inside the repo:
-  nothing that needs human judgment, production access or an external account.
-  A story whose criteria the agent can never meet is retried, then set aside,
-  and every story after it is blocked.
-- Put tests and any docs a story needs in that story's acceptance criteria:
-  no separate testing, hardening or documentation stories.
-
----
-
-## Functional requirements
-
-Create a numbered list of specific functionalities:
-
-- "FR-1: The system must allow users to..."
-- "FR-2: When a user clicks X, the system must..."
-
-Be explicit and unambiguous — these determine the final success of the
-implementation regardless of size. Write them as bullets, never as headings.
-If the PRD is **L or larger**, they become the final functional-requirements
-validation sub-issue of the epic. If smaller, they live directly in the single
-issue's description alongside its acceptance criteria.
-
-### The functional-requirements validation sub-issue
-
-In an epic, this is the last story, blocked by every other sub-issue. By
-default it is an **agent story**: the agent checks each FR against the code,
-adds missing tests and fixes gaps. A pass that changes nothing is fine. Human
-review happens on the PR, which omniralph opens once this story is done.
-
-Title: `Validate functional requirements`. Description:
-
-```markdown
-Verify that the finished epic meets every functional requirement and every
-story's acceptance criteria. For each item, confirm it in the code or with a
-test; add missing tests and fix any gap you find.
-
-Stories covered: ENG-12, ENG-13, ENG-14
-
-## Acceptance Criteria
-
-- [ ] FR-1: ...
-- [ ] FR-2: ...
-- [ ] All acceptance criteria of the stories above are met
-- [ ] All quality gates pass
-```
-
-Make it a **manual** story only if the user explicitly wants a person to sign
-off before the PR exists. Warn them first: omniralph opens the PR only after
-every story is done, so a manual validation story means no PR at all until the
-person closes it — unless the repository sets `openPullRequestEarly`.
-
----
-
-## Writing quality
-
-The PRD will be executed by AI coding agents via omniralph, one story per fresh
-session. Therefore:
-
-- Be explicit and unambiguous.
-- User stories should be small (completable in one session), each a complete
-  feature slice that includes its own tests and error handling.
-- Acceptance criteria must be machine-verifiable, by the agent, in the repo.
-- Include specific file paths if you know them.
-- Reference existing code patterns in the project.
+**Writing quality.** Each task is built by an AI coding agent in one fresh
+session, so be explicit and unambiguous, include specific file paths when you
+know them, and reference existing patterns in the repo.
 
 ---
 
 ## Linear structure reference
 
-When you write to Linear (the exact create-vs-update actions are in each mode
-file), the target structure is one of:
+When you write to Linear (the exact create-or-update actions are in
+each mode file), the target structure is one of:
 
 **Epic (L or larger):**
 
-- A parent/epic issue whose description is the PRD body, including the branch
-  line (and a repository tag, if the user asked for one).
-- One sub-issue per user story, created **in story order**, each with:
-  - `parentId` = the epic, `title` = the plain story title, `description` = the
-    story body in the format above;
-  - `priority` (1 Urgent, 2 High, 3 Medium, 4 Low) — always set;
-  - `blockedBy` = only the sibling sub-issues of this epic it depends on —
-    **never** an issue outside the epic (see "Stories may only be blocked by
-    stories in the same epic");
+- A parent issue whose description is the epic, plus the branch line (and a
+  repo tag, if the user asked for one).
+- One sub-issue per task, created **in task order**, each with:
+  - `parentId` = the epic, `title` = the plain task title, `description` =
+    the task in the story or fix format;
+  - `priority` (1 Urgent, 2 High, 3 Medium, 4 Low), always set;
+  - `blockedBy` = the tasks (and any work items outside the epic) it depends
+    on, as the dependency rules allow;
   - the **manual** label (`addLabels`) for steps for a person.
-- One final functional-requirements validation sub-issue (see above),
-  `blockedBy` every other sub-issue.
-- Every dependency on an issue outside the epic — whether the whole epic or
-  just one story needs it — goes on the **epic's** `blockedBy`: omniralph
-  won't start any story until it's done.
+- The validation audit as the last sub-issue, `blockedBy` every other
+  sub-issue.
+- If the epic as a whole waits on other work, make the **epic** `blockedBy`
+  it: Omniralph won't start any task until it's done.
 
 After creating them:
 
-1. Replace drafting labels with Linear identifiers wherever they ended up in a
-   description (story cross-references, the validation sub-issue's "Stories
-   covered" line).
-2. Verify every dependency you drafted exists as a blocks relation, and that
-   no sub-issue is blocked by anything outside the epic. If one is, remove that
-   relation from the sub-issue and add it to the epic instead.
+1. Replace drafting labels with Linear identifiers wherever they ended
+   up in a description.
+2. Verify every dependency you drafted exists as a blocks relation.
 
-**Single issue (smaller than L):**
+**Single task (smaller than L):**
 
-- One issue whose description is the PRD body and branch line, then the
-  functional requirements, then a consolidated acceptance-criteria checklist
-  under `## Acceptance Criteria` as the **last** section. No sub-issues.
-- omniralph treats the whole description as one story, and would split it into
-  sub-issues if it looked like a PRD with stories. So in a single issue:
-  - no story-style headings such as `### US-001: …`, `### FR-1: …` or
-    `### Feature 1.1: …` — keep FRs and criteria as bullets and checkboxes;
-  - no ```` ```json ```` block containing `userStories`;
-  - no `## Description` or `## Test Plan` headings.
-- Set `blockedBy` for any issue it waits on, as for an epic.
+- One issue whose description is a story, or a fix for a bug, with no
+  `Covers:` line, plus the branch line. No sub-issues.
+- Omniralph builds the whole description as one task, and would split it into
+  sub-issues if it looked like an epic. So in a single task: no requirement
+  list, no task-style headings such as `### US-001: …`, and
+  `## Acceptance Criteria` is the last section.
+- Set `blockedBy` for any work item it waits on, as for an epic.
 
-Whenever removing a story/issue in Linear, **cancel** it (do not delete). Never
-modify a sub-issue that is already completed or in progress, and never
+Whenever removing a task in Linear, **cancel** it (do not delete).
+Never modify a sub-issue that is already completed or in progress, and never
 restructure an issue, without explicit user confirmation.
 
-### Delegating to omniralph
+### Routing and branch lines
+
+Omniralph routes an issue to a repo by its **team, project or label**,
+configured per repo in Omniralph. Expect that routing to be in place, and put
+the issue in the team or project (or give it the label) that routes it.
+
+- **Repo tag (only when asked).** Don't add a `[repo=…]` tag unless the user
+  asks for one. A tag overrides the routing: an issue tagged with a repo that
+  doesn't have Omniralph enabled isn't routed at all. When asked, add
+  `[repo=<full path>]` on its own line, with the repo's full path
+  (`acme/app`, `group/subgroup/project`). One repo per tag, and no branch in
+  it.
+- **Branch (optional).** If the user wants a specific branch name, add
+  ``> Branch: `name` `` on its own line after the sections. Otherwise
+  Omniralph uses Linear's branch name for the issue.
+
+### Delegating to Omniralph
 
 Delegating is what starts the run, and it's the user's call. Never offer to
 delegate, and don't suggest it as a next step. Only if the user asks, delegate
-the epic (or single issue) with `save_issue` and `delegate`, using the agent
+the epic (or single task) with `save_issue` and `delegate`, using the agent
 name from `LINEAR.md`, else `Omniralph`.
 
 ---
 
 ## Worked example
 
-### PRD
+An epic of size L, titled `Task priorities`:
 
 ```markdown
-# PRD: Task Priority System
+## Problem
 
-## Introduction
+People with a long task list can't tell what matters most, so urgent tasks get
+lost among routine ones. Tasks have no notion of priority today.
 
-Add priority levels to tasks so users can focus on what matters most. Tasks can
-be marked as high, medium, or low priority, with visual indicators and
-filtering to help users manage their workload effectively.
+## Scope
 
-## Goals
+### In
 
-- Allow assigning priority (high/medium/low) to any task
-- Provide clear visual differentiation between priority levels
-- Enable filtering and sorting by priority
-- Default new tasks to medium priority
+- A priority (high, medium or low) on every task, medium by default
+- A priority badge on task cards
+- Filtering and sorting the task list by priority
 
-## Quality Gates
+### Out
 
-These commands must pass for every user story:
-- `pnpm typecheck` - Type checking
-- `pnpm lint` - Linting
-- `pnpm test` - Unit tests
+- Reminders or notifications based on priority
+- Setting priority automatically from due dates
 
-## Non-Goals
+## Technical notes
 
-- No priority-based notifications or reminders
-- No automatic priority assignment based on due date
-- No priority inheritance for subtasks
+- Reuse the badge component in `src/components/badge.tsx` with its color variants.
+- Keep filter state in the URL search params, like the status filter.
 
-## Technical Considerations
+## Requirements
 
-- Reuse existing badge component with color variants
-- Filter state managed via URL search params
-- Priority stored in database, not computed
-
-## Success Metrics
-
-- Users can change priority in under 2 clicks
-- High-priority tasks immediately visible at top of lists
-- No regression in task list performance
+- FR-1: The system must store a priority of high, medium or low on every task, medium by default.
+- FR-2: The system must show each task's priority as a colored badge on its card.
+- FR-3: WHEN a user picks a priority filter, the system must list only the tasks with that priority.
+- FR-4: IF a task is saved with a priority outside high, medium or low, the system must reject it.
 ```
 
-### User Stories
-
-Sub-issue 1 — title `Add priority field to database`, priority High, no
-blockers:
+One of its stories, titled `Show priority on task cards`, priority High,
+blocked by the story that stores the priority:
 
 ```markdown
-As a developer, I want to store task priority in the database so that it
-persists across sessions.
+As a user, I want to see each task's priority at a glance so that I know what needs attention first.
+
+Covers: FR-2
+
+The badge component is `src/components/badge.tsx`; task cards are in `src/tasks/card.tsx`.
 
 ## Acceptance Criteria
 
-- [ ] Add priority column to tasks table: 'high' | 'medium' | 'low' (default 'medium')
-- [ ] Generate and run migration successfully
-- [ ] Saving a task with a value outside 'high' | 'medium' | 'low' is rejected
-- [ ] Tests cover the default value and the rejected value
-- [ ] Typecheck passes
+- [ ] Each task card shows a priority badge: red for high, yellow for medium, gray for low
+- [ ] The badge is visible without hovering or clicking
+- [ ] A task without a stored priority shows the medium badge
 ```
 
-Sub-issue 2 — title `Display priority indicator on task cards`, priority High,
-blocked by sub-issue 1:
+A fix filed in the same epic, titled `Sort priorities by rank, not by name`:
 
 ```markdown
-As a user, I want to see task priority at a glance so that I know what needs
-attention first.
+## Current behavior
+
+Sorting the task list by priority puts low before medium: the sort compares the priority names alphabetically.
+
+## Expected behavior
+
+Sorting by priority orders tasks high, then medium, then low, within each status column.
+
+## Unchanged behavior
+
+Sorting by due date and by title orders tasks as it does today, and the sort choice stays in the URL.
 
 ## Acceptance Criteria
 
-- [ ] Each task card shows colored priority badge (red=high, yellow=medium, gray=low)
-- [ ] Priority visible without hovering or clicking
-- [ ] Component test covers the badge for each priority level
-- [ ] Typecheck passes
+- [ ] With one task of each priority, sorting by priority lists them high, medium, low
+- [ ] Sorting by due date and by title gives the same order as before
+- [ ] Reloading the page keeps the chosen sort
 ```
 
-### Functional Requirements
-
-```markdown
-- FR-1: Add `priority` field to tasks table ('high' | 'medium' | 'low', default 'medium')
-- FR-2: Display colored priority badge on each task card
-- FR-3: Include priority selector in task edit modal
-- FR-4: Add priority filter dropdown to task list header
-- FR-5: Sort by priority within each status column (high > medium > low)
-```
+The epic ends with the validation audit, listing FR-1 to FR-4.
