@@ -5,13 +5,13 @@
     "name": "Steve McMaster"
   },
   "metadata": {
-    "description": "Plan epics, stories and fixes in Linear for Omniralph to build, with t-shirt sizing and epic decomposition."
+    "description": "Plan epics, stories and fixes in Linear for Omniralph to build, with t-shirt sizing and epic decomposition, and draft a feature's PRFAQ and Plan."
   },
   "plugins": [
     {
       "name": "omniralph-prd",
       "source": "./plugins/omniralph-prd",
-      "description": "Plan epics, stories and fixes in Linear for Omniralph to build, with t-shirt sizing and epic decomposition."
+      "description": "Plan epics, stories and fixes in Linear for Omniralph to build, with t-shirt sizing and epic decomposition, and draft a feature's PRFAQ and Plan."
     }
   ]
 }
